@@ -1,0 +1,14 @@
+apiVersion: v2
+name: flowable-ez-install
+description: A Helm chart for Flowable using Kubernetes
+
+type: application
+
+version: 1.0.0
+
+appVersion: "0.0.1"
+
+dependencies:
+  - name: flowable
+    version: 3.17.6
+    repository: https://flowable.jfrog.io/artifactory/flowable-helm/
