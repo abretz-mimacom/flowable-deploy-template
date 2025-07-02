@@ -37,12 +37,12 @@ flowable:
           - |
             echo "Downloading external JAR...";
             # curl -v -H "PRIVATE-TOKEN: $REPO_FLWAPPS_TOKEN" -L "https://../flowable/flowapps/1.0/flowapps-1.0.jar" -o /additional-classpath/flowapps.jar
-        env:
-          - name: REPO_FLWAPPS_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: gitlab-token
-                key: REPO_FLWAPPS_TOKEN
+        # env:
+        #   - name: REPO_FLWAPPS_TOKEN
+        #     valueFrom:
+        #       secretKeyRef:
+        #         name: gitlab-token
+        #         key: REPO_FLWAPPS_TOKEN
         volumeMounts:
           - name: additional-classpath
             mountPath: /additional-classpath/
