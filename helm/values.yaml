@@ -68,5 +68,5 @@ flowable:
   engage:
     enabled: false
   
-  flowable:
-    dockerAuthSecret: flw-docker-auth
+  # flowable:
+  #   dockerAuthSecret: flw-docker-auth
