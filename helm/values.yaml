@@ -1,71 +1,72 @@
-# ingress:
-#     # Enable/disbale the ingress configuration for the Helm chart.
-#   enabled: true
-#   # Define if https should be used to access the service urls (this is highly suggested)
-#   tls: true
-#   # Ingress proxy settings in case of custom frontend (CORS)
-#   allowOriginEnabled: true
-#   allowOriginUrl: "*"
-#   domain: projects.flowable.io
-#   bodySize: "20m"
-#   ingressClass: external
-
-  # authentication:
-  #   type: basic
-  #   basic:
-  #     username: flowable
-  #     password: Ez!nst@ll
-
-work:
-  enabled: true
-  envVariables:
-    flowable.platform.idm.default-password: "Ez!nst@ll"
-    flowable.inspect.enabled: true
-  # extraVolumes: 
-  #   - name: additional-classpath
-  #     emptyDir: {}
-  # extraVolumeMounts:
-  #   - name: additional-classpath
-  #     mountPath: /additional-classpath/
-  # extraInitContainers:
-  #   - name: load-external-jar
-  #     image: curlimages/curl:latest
-  #     command: ["/bin/sh", "-c"]
-  #     args:
-  #       - |
-  #         echo "Downloading external JAR...";
-  #         curl -v -H "PRIVATE-TOKEN: $REPO_FLWAPPS_TOKEN" -L "https://../flowable/flowapps/1.0/flowapps-1.0.jar" -o /additional-classpath/flowapps.jar
-  #     env:
-  #       - name: REPO_FLWAPPS_TOKEN
-  #         valueFrom:
-  #           secretKeyRef:
-  #             name: gitlab-token
-  #             key: REPO_FLWAPPS_TOKEN
-  #     volumeMounts:
-  #       - name: additional-classpath
-  #         mountPath: /additional-classpath/
-  # extraImagePullSecrets: flw-docker-auth
-
-design:
-  angularVersion: false
-  envVariables:
-    flowable.design.remote.authentication.password: "Ez!nst@ll"
-    flowable.design.user-store.password: "Ez!nst@ll"
-    flowable.design.model-locking.enabled: true
-    flowable.design.model-locking.auto-lock-on-create: true
-  # extraImagePullSecrets: flw-docker-auth
-  # image:
-  #   repository: artifacts.flowable.com/docker-local/flowable/flowable-design
-
-
-control:
-  # extraImagePullSecrets: flw-docker-auth
-  envVariables:
-    flowable.control.app.cluster-config.password: "Ez!nst@ll"
-    flowable.control.app.user-store.password: "Ez!nst@ll"
-
-engage:
-  enabled: false
-
-flowable:
-  dockerAuthSecret: flw-docker-auth
+flowable: 
+  # ingress:
+  #     # Enable/disbale the ingress configuration for the Helm chart.
+  #   enabled: true
+  #   # Define if https should be used to access the service urls (this is highly suggested)
+  #   tls: true
+  #   # Ingress proxy settings in case of custom frontend (CORS)
+  #   allowOriginEnabled: true
+  #   allowOriginUrl: "*"
+  #   domain: projects.flowable.io
+  #   bodySize: "20m"
+  #   ingressClass: external
+  
+    # authentication:
+    #   type: basic
+    #   basic:
+    #     username: flowable
+    #     password: Ez!nst@ll
+  
+  work:
+    enabled: true
+    envVariables:
+      flowable.platform.idm.default-password: "Ez!nst@ll"
+      flowable.inspect.enabled: true
+    # extraVolumes: 
+    #   - name: additional-classpath
+    #     emptyDir: {}
+    # extraVolumeMounts:
+    #   - name: additional-classpath
+    #     mountPath: /additional-classpath/
+    # extraInitContainers:
+    #   - name: load-external-jar
+    #     image: curlimages/curl:latest
+    #     command: ["/bin/sh", "-c"]
+    #     args:
+    #       - |
+    #         echo "Downloading external JAR...";
+    #         curl -v -H "PRIVATE-TOKEN: $REPO_FLWAPPS_TOKEN" -L "https://../flowable/flowapps/1.0/flowapps-1.0.jar" -o /additional-classpath/flowapps.jar
+    #     env:
+    #       - name: REPO_FLWAPPS_TOKEN
+    #         valueFrom:
+    #           secretKeyRef:
+    #             name: gitlab-token
+    #             key: REPO_FLWAPPS_TOKEN
+    #     volumeMounts:
+    #       - name: additional-classpath
+    #         mountPath: /additional-classpath/
+    # extraImagePullSecrets: flw-docker-auth
+  
+  design:
+    angularVersion: false
+    envVariables:
+      flowable.design.remote.authentication.password: "Ez!nst@ll"
+      flowable.design.user-store.password: "Ez!nst@ll"
+      flowable.design.model-locking.enabled: true
+      flowable.design.model-locking.auto-lock-on-create: true
+    # extraImagePullSecrets: flw-docker-auth
+    # image:
+    #   repository: artifacts.flowable.com/docker-local/flowable/flowable-design
+  
+  
+  control:
+    # extraImagePullSecrets: flw-docker-auth
+    envVariables:
+      flowable.control.app.cluster-config.password: "Ez!nst@ll"
+      flowable.control.app.user-store.password: "Ez!nst@ll"
+  
+  engage:
+    enabled: false
+  
+  flowable:
+    dockerAuthSecret: flw-docker-auth
