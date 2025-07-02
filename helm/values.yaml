@@ -47,7 +47,8 @@ flowable:
           - name: additional-classpath
             mountPath: /additional-classpath/
     # extraImagePullSecrets: flw-docker-auth
-  
+  elasticsearch:
+    enabled: true
   design:
     angularVersion: false
     envVariables:
