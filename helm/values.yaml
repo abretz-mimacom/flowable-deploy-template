@@ -47,8 +47,13 @@ flowable:
           - name: additional-classpath
             mountPath: /additional-classpath/
     # extraImagePullSecrets: flw-docker-auth
+    storage:
+      provisioner: rancher.io/local-path 
+      storageClass: standard
+      
   elasticsearch:
     enabled: true
+    
   design:
     angularVersion: false
     envVariables:
