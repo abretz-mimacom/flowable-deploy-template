@@ -49,7 +49,7 @@ flowable:
     # extraImagePullSecrets: flw-docker-auth
     storage:
       provisioner: rancher.io/local-path 
-      # storageClass: standard
+      storageClass: standard
       
   elasticsearch:
     enabled: true
