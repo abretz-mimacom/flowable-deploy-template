@@ -19,6 +19,7 @@ flowable:
   
   work:
     enabled: true
+    replicas: 5
     envVariables:
       flowable.platform.idm.default-password: "Ez!nst@ll"
       flowable.inspect.enabled: true
