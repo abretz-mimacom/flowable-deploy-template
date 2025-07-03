@@ -22,22 +22,22 @@ flowable:
     image:
       tag: 3.9.13
     replicas: 5
-    envVariables:
-      flowable.platform.idm.default-password: "Ez!nst@ll"
-      flowable.inspect.enabled: true
+    # envVariables:
+    #   flowable.platform.idm.default-password: "Ez!nst@ll"
+    #   flowable.inspect.enabled: true
     extraVolumes: 
       - name: additional-classpath
         emptyDir: {}
     extraVolumeMounts:
       - name: additional-classpath
         mountPath: /additional-classpath/
-    extraInitContainers:
-      - name: load-external-jar
-        image: curlimages/curl:latest
-        command: ["/bin/sh", "-c"]
-        args:
-          - |
-            echo "Downloading external JAR...";
+    # extraInitContainers:
+    #   - name: load-external-jar
+    #     image: curlimages/curl:latest
+    #     command: ["/bin/sh", "-c"]
+    #     args:
+    #       - |
+    #         echo "Downloading external JAR...";
             # curl -v -H "PRIVATE-TOKEN: $REPO_FLWAPPS_TOKEN" -L "https://../flowable/flowapps/1.0/flowapps-1.0.jar" -o /additional-classpath/flowapps.jar
         # env:
         #   - name: REPO_FLWAPPS_TOKEN
