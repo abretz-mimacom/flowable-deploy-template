@@ -19,6 +19,8 @@ flowable:
   
   work:
     enabled: true
+    image:
+      tag: 3.9.13
     replicas: 5
     envVariables:
       flowable.platform.idm.default-password: "Ez!nst@ll"
