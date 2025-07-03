@@ -11,4 +11,4 @@ appVersion: "0.0.1"
 dependencies:
   - name: flowable
     version: 3.11.0
-    repository: https://flowable.jfrog.io/artifactory/flowable-helm/
+    repository: "@flowable-helm"
