@@ -10,5 +10,5 @@ appVersion: "0.0.1"
 
 dependencies:
   - name: flowable
-    version: 3.11.0
+    version: 3.11.9
     repository: "@flowable-helm"
