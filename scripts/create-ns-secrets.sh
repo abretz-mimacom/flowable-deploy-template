@@ -2,7 +2,7 @@
 
 set -o errexit
 
-#!/bin/bash
+DEFAULT_LICENSE_FILE_PATH="$HOME/.flowable/flowable.license"
 
 # Check for required argument (namespace)
 if [ -z "$1" ]; then
@@ -13,7 +13,7 @@ else
   DEPLOYMENT_NAMESPACE="$1"
 fi
 
-
+# Check if namespace exists, if not create it
 if kubectl get namespace "$DEPLOYMENT_NAMESPACE" >/dev/null 2>&1; then
   echo "Namespace $DEPLOYMENT_NAMESPACE exists. Will not attempt to create it."
 else
@@ -21,23 +21,23 @@ else
   source "$CODESPACE_VSCODE_FOLDER/scripts/create-ns.sh $DEPLOYMENT_NAMESPACE"
 fi
 
-# Check for FLOWABLE_LICENSE_KEY
+# Check for FLOWABLE_LICENSE_KEY - raw text value (recommended ONLY putting in the Codespace secret environment variable)
 if [ -z "$FLOWABLE_LICENSE_KEY" ]; then
   echo "FLOWABLE_LICENSE_KEY environment variable is not set. Your deployment is likely to fail."
 else
-  echo "FLOWABLE_LICENSE_KEY is set. Writing its contents to $HOME/.flowable/flowable.license"
+  echo "FLOWABLE_LICENSE_KEY is set. Writing its contents to $DEFAULT_LICENSE_FILE_PATH"
   mkdir -p "$HOME/.flowable"
-  echo "$FLOWABLE_LICENSE_KEY" > "$HOME/.flowable/flowable.license"
-  chmod 600 "$HOME/.flowable/flowable.license"
+  echo "$FLOWABLE_LICENSE_KEY" > "$DEFAULT_LICENSE_FILE_PATH"
+  chmod 600 "$DEFAULT_LICENSE_FILE_PATH" # likely not needed, but just in case
 fi
 
 if [ -z "$2" ]; then
-  echo "no license file path specified, using '$HOME/.flowable/flowable.license' by default"
+  echo "no license file path specified, using $DEFAULT_LICENSE_FILE_PATH by default"
 else
-  echo "using license file path: $2"
+  echo "using license file path: $3"
 fi
 
-LICENSE_FILE_PATH="${2:-$HOME/.flowable/flowable.license}"
+LICENSE_FILE_PATH="${3:-$DEFAULT_LICENSE_FILE_PATH}"
 
 if [ -z "$FLOWABLE_REPO_USER" ]; then
   echo "must have FLOWABLE_REPO_USER env variable set for secret creation"
@@ -49,10 +49,12 @@ if [ -z "$FLOWABLE_REPO_PASSWORD" ]; then
   exit 1
 fi
 
-kubectl create secret docker-registry yourReleaseName-flowable-regcred \
+RELEASE_NAME="${2:-flowable}"
+
+kubectl create secret docker-registry $RELEASE_NAME-flowable-regcred \
   --docker-server=repo.flowable.com \
   --docker-username="$FLOWABLE_REPO_USER"\
-  --docker-password="$FLOWABLE_REPO_PASSWORD"> \
+  --docker-password="$FLOWABLE_REPO_PASSWORD" \
   --namespace $DEPLOYMENT_NAMESPACE
 
 kubectl create secret generic $RELEASE_NAME-flowable-license \
