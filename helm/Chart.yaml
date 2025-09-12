@@ -1,5 +1,5 @@
 apiVersion: v2
-name: flowable-ez-install
+name: flowable-deployment-template
 description: A Helm chart for Flowable using Kubernetes
 
 type: application
@@ -10,5 +10,5 @@ appVersion: "0.0.1"
 
 dependencies:
   - name: flowable
-    version: 3.11.9
-    repository: "@flowable-helm"
+    version: 2025.1.01
+    repository: https://repo.flowable.com/flowable-helm

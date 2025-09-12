@@ -2,7 +2,10 @@
 
 set -o errexit
 
+RELEASE_NAME="${2:-flowable}"
 DEFAULT_LICENSE_FILE_PATH="$HOME/.flowable/flowable.license"
+LICENSE_FILE_PATH="${3:-$DEFAULT_LICENSE_FILE_PATH}"
+
 
 # Check for required argument (namespace)
 if [ -z "$1" ]; then
@@ -18,7 +21,7 @@ if kubectl get namespace "$DEPLOYMENT_NAMESPACE" >/dev/null 2>&1; then
   echo "Namespace $DEPLOYMENT_NAMESPACE exists. Will not attempt to create it."
 else
   echo "Namespace $DEPLOYMENT_NAMESPACE does not exist. Creating it now."
-  source "$CODESPACE_VSCODE_FOLDER/scripts/create-ns.sh $DEPLOYMENT_NAMESPACE"
+  source "$CODESPACE_VSCODE_FOLDER/scripts/create-ns.sh" "$DEPLOYMENT_NAMESPACE"
 fi
 
 # Check for FLOWABLE_LICENSE_KEY - raw text value (recommended ONLY putting in the Codespace secret environment variable)
@@ -37,7 +40,7 @@ else
   echo "using license file path: $3"
 fi
 
-LICENSE_FILE_PATH="${3:-$DEFAULT_LICENSE_FILE_PATH}"
+
 
 if [ -z "$FLOWABLE_REPO_USER" ]; then
   echo "must have FLOWABLE_REPO_USER env variable set for secret creation"
@@ -49,14 +52,18 @@ if [ -z "$FLOWABLE_REPO_PASSWORD" ]; then
   exit 1
 fi
 
-RELEASE_NAME="${2:-flowable}"
+echo "Attempting to delete existing secrets to avoid 'AlreadyExists' errors"
 
-kubectl create secret docker-registry $RELEASE_NAME-flowable-regcred \
+source "$CODESPACE_VSCODE_FOLDER/scripts/delete-ns-secrets.sh" "$DEPLOYMENT_NAMESPACE" "$RELEASE_NAME"
+
+echo "Creating secrets in namespace: $DEPLOYMENT_NAMESPACE"
+
+kubectl create secret docker-registry "$RELEASE_NAME-flowable-regcred" \
   --docker-server=repo.flowable.com \
   --docker-username="$FLOWABLE_REPO_USER"\
   --docker-password="$FLOWABLE_REPO_PASSWORD" \
   --namespace $DEPLOYMENT_NAMESPACE
 
-kubectl create secret generic $RELEASE_NAME-flowable-license \
+kubectl create secret generic "$RELEASE_NAME-flowable-license" \
   --from-file=flowable.license="$LICENSE_FILE_PATH" \
   --namespace $DEPLOYMENT_NAMESPACE
