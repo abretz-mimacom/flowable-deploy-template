@@ -22,11 +22,12 @@ fi
 # See: https://github.com/containerd/containerd/blob/main/docs/hosts.md
 cat <<EOF | kind create cluster --config=-
 kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
   - role: worker
   - role: worker
-apiVersion: kind.x-k8s.io/v1alpha4
+  - role: worker
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry]

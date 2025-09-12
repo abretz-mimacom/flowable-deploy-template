@@ -34,7 +34,7 @@ flowable:
   #    repository: localhost:5001/myflowable
       # tag: latest
       tag: 2025.1.01
-    replicas: 3 # 5 node deployment
+    replicas: 5 # multi-node deployment
     metrics:
       enabled: true
     javaOpts: "-XX:InitialRAMPercentage=70.0 -XX:MaxRAMPercentage=70.0 -XX:MinRAMPercentage=70.0"
