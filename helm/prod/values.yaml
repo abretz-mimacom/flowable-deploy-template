@@ -34,7 +34,7 @@ flowable:
   #    repository: localhost:5001/myflowable
       # tag: latest
       tag: 2025.1.01
-    replicas: 5 # multi-node deployment
+    replicas: 2 # multi-node deployment
     metrics:
       enabled: true
     javaOpts: "-XX:InitialRAMPercentage=70.0 -XX:MaxRAMPercentage=70.0 -XX:MinRAMPercentage=70.0"
@@ -99,28 +99,14 @@ flowable:
     master:
       resources:
         requests:
-          cpu: 1
+          cpu: 2
           memory: 2048Mi
         limits:
-          cpu: 1
+          cpu: 2
           memory: 2048Mi
 
   design:
     enabled: false
-    image:
-      # tag: latest
-      tag: 2025.1.01
-    angularVersion: false
-    envVariables:
-        flowable.design.model-locking.enabled: true
-        flowable.design.model-locking.auto-lock-on-create: true
-  #      application.design.ai.type: openai
-  #      spring.ai.openai.api-key: ""
-  #      spring.ai.openai.chat.options.temperature: 0.3
-  #      spring.ai.openai.chat.options.model: gpt-4o
-  #      extraImagePullSecrets: flw-docker-auth
-  #      image:
-  #       repository: artifacts.flowable.com/docker-local/flowable/flowable-design
 
 
   control:
