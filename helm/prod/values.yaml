@@ -13,17 +13,17 @@ flowable:
 
   postgres:
     enabled: true
-    primary:
-      extraEnvVars:
-        - name: POSTGRESQL_MAX_CONNECTIONS
-          value: "400"
-      resources:
-        requests:
-          cpu: "500m"
-          memory: "1Gi"
-        limits:
-          cpu: "1"
-          memory: "2Gi"
+    # primary:
+    #   extraEnvVars:
+    #     - name: POSTGRESQL_MAX_CONNECTIONS
+    #       value: "400"
+    #   resources:
+    #     requests:
+    #       cpu: "500m"
+    #       memory: "1Gi"
+    #     limits:
+    #       cpu: "1"
+    #       memory: "2Gi"
 
   work:
     enabled: false
@@ -95,15 +95,15 @@ flowable:
 
   elasticsearch:
     enabled: true
-    nodeGroup: master
-    master:
-      resources:
-        requests:
-          cpu: 2
-          memory: 2048Mi
-        limits:
-          cpu: 2
-          memory: 2048Mi
+    # nodeGroup: master
+    # master:
+    #   resources:
+    #     requests:
+    #       cpu: 2
+    #       memory: 2048Mi
+    #     limits:
+    #       cpu: 2
+    #       memory: 2048Mi
 
   design:
     enabled: false
