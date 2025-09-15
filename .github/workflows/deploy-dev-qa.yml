@@ -43,7 +43,10 @@ jobs:
           export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
           kubectl config use-context kind-qa || echo "Context qa not found - this job assumes cluster already set."
       - name: Run deploy-flowable-platform.sh for dev/qa
-        run: scripts/deploy-flowable-platform.sh dev flowable qa
+        run: |
+          git submodule update --init --recursive --remote --force
+          chmod a+x scripts/*
+          scripts/deploy-flowable-platform.sh dev flowable qa
 
   deploy-stg-prod:
     needs: setup
@@ -57,4 +60,7 @@ jobs:
           export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
           kubectl config use-context kind-prod || echo "Context prod not found - this job assumes cluster already set."
       - name: Run deploy-flowable-platform.sh for stg/prod
-        run: scripts/deploy-flowable-platform.sh stg flowable prod
+        run: |
+          git submodule update --init --recursive --remote --force
+          chmod a+x scripts/*
+          scripts/deploy-flowable-platform.sh stg flowable prod
