@@ -7,7 +7,7 @@ on:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     outputs:
       kubeconfig-path: ${{ steps.set-kubeconfig.outputs.kubeconfig-path }}
@@ -33,7 +33,7 @@ jobs:
 
   deploy-dev-qa:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +62,7 @@ jobs:
           export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
           kind get clusters
           kubectl config use-context kind-qa || echo "Context qa not found - this job assumes cluster already set."
-          
+
       - name: Run deploy-flowable-platform.sh for dev/qa
         run: |
           cd $GITHUB_WORKSPACE
@@ -77,7 +77,7 @@ jobs:
 
   deploy-stg-prod:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
       - name: Checkout repository
