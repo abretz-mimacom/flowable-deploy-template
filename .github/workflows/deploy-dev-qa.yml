@@ -16,8 +16,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Install kubectl
         run: |
-          sudo apt-get update
-          sudo apt-get install -y kubectl
+          curl -LO "https://cdn.dl.k8s.io/release/$(curl -L -s https://cdn.dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          # Make the binary executable
+          chmod +x kubectl
+          # Move the binary to a directory in your system's PATH
+          sudo mv ./kubectl /usr/local/bin/kubectl
       - name: Install kind
         run: |
           curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64"
