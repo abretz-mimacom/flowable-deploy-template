@@ -62,7 +62,6 @@ jobs:
           export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
           kind get clusters
           kubectl config use-context kind-qa || echo "Context qa not found - this job assumes cluster already set."
-
       - name: Run deploy-flowable-platform.sh for dev/qa
         run: |
           cd $GITHUB_WORKSPACE
