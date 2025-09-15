@@ -46,7 +46,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           git submodule update --init --recursive --remote --force
-          chmod a+x $GITHUB_WORKSPACEscripts/*
+          sudo chmod a+x $GITHUB_WORKSPACEscripts/*
           $GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh dev flowable qa
         env:
           FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
@@ -68,7 +68,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           git submodule update --init --recursive --remote --force
-          chmod a+x $GITHUB_WORKSPACE/scripts/*
+          sudo chmod a+x $GITHUB_WORKSPACE/scripts/*
           $GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh stg flowable prod
         env:
           FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
