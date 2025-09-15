@@ -46,7 +46,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           git submodule update --init --recursive --remote --force
-          sudo chmod a+x $GITHUB_WORKSPACEscripts/*
+          sudo chmod a+x $GITHUB_WORKSPACE/scripts/*
+          printenv
           source "$GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh" "dev" "flowable" "qa"
 
   deploy-stg-prod:
