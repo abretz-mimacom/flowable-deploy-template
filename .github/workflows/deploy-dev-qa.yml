@@ -44,9 +44,10 @@ jobs:
           kubectl config use-context kind-qa || echo "Context qa not found - this job assumes cluster already set."
       - name: Run deploy-flowable-platform.sh for dev/qa
         run: |
+          cd $GITHUB_WORKSPACE
           git submodule update --init --recursive --remote --force
-          chmod a+x scripts/*
-          source scripts/deploy-flowable-platform.sh dev flowable qa
+          chmod a+x $GITHUB_WORKSPACEscripts/*
+          $GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh dev flowable qa
         env:
           FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
           FLOWABLE_REPO_USER: ${{ secrets.FLOWABLE_REPO_USER }}
@@ -65,9 +66,10 @@ jobs:
           kubectl config use-context kind-prod || echo "Context prod not found - this job assumes cluster already set."
       - name: Run deploy-flowable-platform.sh for stg/prod
         run: |
+          cd $GITHUB_WORKSPACE
           git submodule update --init --recursive --remote --force
-          chmod a+x scripts/*
-          source scripts/deploy-flowable-platform.sh stg flowable prod
+          chmod a+x $GITHUB_WORKSPACE/scripts/*
+          $GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh stg flowable prod
         env:
           FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
           FLOWABLE_REPO_USER: ${{ secrets.FLOWABLE_REPO_USER }}
