@@ -47,10 +47,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           git submodule update --init --recursive --remote --force
           sudo chmod a+x $GITHUB_WORKSPACEscripts/*
-        env:
-          FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
-          FLOWABLE_REPO_USER: ${{ secrets.FLOWABLE_REPO_USER }}
-          FLOWABLE_REPO_PASSWORD: ${{ secrets.FLOWABLE_REPO_PASSWORD }}
+          source "$GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh" "dev" "flowable" "qa"
 
   deploy-stg-prod:
     needs: setup
@@ -68,6 +65,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           git submodule update --init --recursive --remote --force
           sudo chmod a+x $GITHUB_WORKSPACE/scripts/*
+          source "$GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh" "stg" "flowable" "prod"
         env:
           FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
           FLOWABLE_REPO_USER: ${{ secrets.FLOWABLE_REPO_USER }}
