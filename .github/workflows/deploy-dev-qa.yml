@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install kubectl
+      - name: Install kubectl and helm
         uses: azure/setup-kubectl@v4
         with:
           version: 'v1.30.0'   # match your cluster
@@ -53,13 +53,6 @@ jobs:
           CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
           kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get pods -A
 
-      # - name: Deploy manifests to apps namespace
-      #   run: |
-      #     API="https://kubernetes.default.svc"
-      #     TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
-      #     CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-      #     kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" -n apps apply -f k8s/
-
       - name: Use kind kubeconfig for qa cluster
         run: |
           export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
@@ -67,9 +60,9 @@ jobs:
       - name: Run deploy-flowable-platform.sh for dev/qa
         run: |
           cd $GITHUB_WORKSPACE
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           git submodule update --init --recursive --remote --force
           sudo chmod a+x $GITHUB_WORKSPACE/scripts/*
-          printenv
           source "$GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh" "dev" "flowable" "qa"
         env:
           FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
