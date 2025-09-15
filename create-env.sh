@@ -15,5 +15,8 @@ bash -c "$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh $CLUSTER_NAME"
 # Deploy Flowable Platform
 "$CODESPACE_VSCODE_FOLDER/scripts/deploy-flowable-platform.sh" "$NAMESPACE" "$RELEASE_NAME"
 
+# Add action runner
+"$CODESPACE_VSCODE_FOLDER/scripts/add-github-action-runner.sh"
+
 
 k9s -n "$NAMESPACE"

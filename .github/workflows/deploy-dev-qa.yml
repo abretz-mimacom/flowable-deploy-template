@@ -1,0 +1,61 @@
+jobs:
+name: Deploy Flowable Platform
+
+on:
+  push:
+    branches:
+      - dev
+
+
+  setup:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    outputs:
+      kubeconfig-path: ${{ steps.set-kubeconfig.outputs.kubeconfig-path }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install kubectl
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y kubectl
+      - name: Install kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64"
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+      - name: Verify kind and kubectl
+        run: |
+          kind --version
+          kubectl version --client
+      - name: Set kubeconfig output
+        id: set-kubeconfig
+        run: echo "kubeconfig-path=$HOME/.kube/config" >> $GITHUB_OUTPUT
+
+  deploy-dev-qa:
+    needs: setup
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use kind kubeconfig for qa cluster
+        run: |
+          export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
+          kubectl config use-context qa || echo "Context qa not found - this job assumes cluster already set."
+      - name: Run deploy-flowable-platform.sh for dev/qa
+        run: scripts/deploy-flowable-platform.sh dev flowable qa
+
+  deploy-stg-prod:
+    needs: setup
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use kind kubeconfig for prod cluster
+        run: |
+          export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
+          kubectl config use-context prod || echo "Context prod not found - this job assumes cluster already set."
+      - name: Run deploy-flowable-platform.sh for stg/prod
+        run: scripts/deploy-flowable-platform.sh stg flowable prod
