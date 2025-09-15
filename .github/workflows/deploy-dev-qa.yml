@@ -51,14 +51,14 @@ jobs:
           API="https://kubernetes.default.svc"
           TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
           CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-          kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get nodes
+          kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get pods -A
 
-      - name: Deploy manifests to apps namespace
-        run: |
-          API="https://kubernetes.default.svc"
-          TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
-          CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-          kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" -n apps apply -f k8s/
+      # - name: Deploy manifests to apps namespace
+      #   run: |
+      #     API="https://kubernetes.default.svc"
+      #     TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+      #     CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+      #     kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" -n apps apply -f k8s/
 
       - name: Use kind kubeconfig for qa cluster
         run: |
