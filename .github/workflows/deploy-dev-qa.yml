@@ -21,14 +21,14 @@ jobs:
           chmod +x kubectl
           # Move the binary to a directory in your system's PATH
           sudo mv ./kubectl /usr/local/bin/kubectl
-      - name: Install kind
-        run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64"
-          chmod +x ./kind
-          sudo mv ./kind /usr/local/bin/kind
+      # - name: Install kind
+      #   run: |
+      #     curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64"
+      #     chmod +x ./kind
+      #     sudo mv ./kind /usr/local/bin/kind
       - name: Verify kind and kubectl
         run: |
-          kind --version
+          # kind --version
           kubectl version --client
       - name: Set kubeconfig output
         id: set-kubeconfig
