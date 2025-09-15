@@ -7,7 +7,7 @@ on:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     outputs:
       kubeconfig-path: ${{ steps.set-kubeconfig.outputs.kubeconfig-path }}
@@ -16,16 +16,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Install kubectl
         run: |
-          sudo apt-get update
-          sudo apt-get install -y kubectl
-      - name: Install kind
-        run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64"
-          chmod +x ./kind
-          sudo mv ./kind /usr/local/bin/kind
+          curl -LO "https://cdn.dl.k8s.io/release/$(curl -L -s https://cdn.dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          # Make the binary executable
+          chmod +x kubectl
+          # Move the binary to a directory in your system's PATH
+          sudo mv ./kubectl /usr/local/bin/kubectl
+      # - name: Install kind
+      #   run: |
+      #     curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64"
+      #     chmod +x ./kind
+      #     sudo mv ./kind /usr/local/bin/kind
       - name: Verify kind and kubectl
         run: |
-          kind --version
+          # kind --version
           kubectl version --client
       - name: Set kubeconfig output
         id: set-kubeconfig
@@ -33,11 +36,23 @@ jobs:
 
   deploy-dev-qa:
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Install kubectl and helm
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.0'   # match your cluster
+
+      - name: Show cluster nodes (in-cluster auth)
+        run: |
+          API="https://kubernetes.default.svc"
+          TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+          CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+          kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get pods -A
+
       - name: Use kind kubeconfig for qa cluster
         run: |
           export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
@@ -45,32 +60,33 @@ jobs:
       - name: Run deploy-flowable-platform.sh for dev/qa
         run: |
           cd $GITHUB_WORKSPACE
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           git submodule update --init --recursive --remote --force
-          chmod a+x $GITHUB_WORKSPACEscripts/*
-          $GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh dev flowable qa
+          sudo chmod a+x $GITHUB_WORKSPACE/scripts/*
+          source "$GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh" "dev" "flowable" "qa"
         env:
           FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
           FLOWABLE_REPO_USER: ${{ secrets.FLOWABLE_REPO_USER }}
           FLOWABLE_REPO_PASSWORD: ${{ secrets.FLOWABLE_REPO_PASSWORD }}
 
-  deploy-stg-prod:
-    needs: setup
-    runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Use kind kubeconfig for prod cluster
-        run: |
-          export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
-          kubectl config use-context kind-prod || echo "Context prod not found - this job assumes cluster already set."
-      - name: Run deploy-flowable-platform.sh for stg/prod
-        run: |
-          cd $GITHUB_WORKSPACE
-          git submodule update --init --recursive --remote --force
-          chmod a+x $GITHUB_WORKSPACE/scripts/*
-          $GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh stg flowable prod
-        env:
-          FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
-          FLOWABLE_REPO_USER: ${{ secrets.FLOWABLE_REPO_USER }}
-          FLOWABLE_REPO_PASSWORD: ${{ secrets.FLOWABLE_REPO_PASSWORD }}
+  # deploy-stg-prod:
+  #   needs: setup
+  #   runs-on: [self-hosted]
+  #   if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #     - name: Use kind kubeconfig for prod cluster
+  #       run: |
+  #         export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
+  #         kubectl config use-context kind-prod || echo "Context prod not found - this job assumes cluster already set."
+  #     - name: Run deploy-flowable-platform.sh for stg/prod
+  #       run: |
+  #         cd $GITHUB_WORKSPACE
+  #         git submodule update --init --recursive --remote --force
+  #         sudo chmod a+x $GITHUB_WORKSPACE/scripts/*
+  #         source "$GITHUB_WORKSPACE/scripts/deploy-flowable-platform.sh" "stg" "flowable" "prod"
+  #       env:
+  #         FLOWABLE_LICENSE_KEY: ${{ secrets.FLOWABLE_LICENSE_KEY }}
+  #         FLOWABLE_REPO_USER: ${{ secrets.FLOWABLE_REPO_USER }}
+  #         FLOWABLE_REPO_PASSWORD: ${{ secrets.FLOWABLE_REPO_PASSWORD }}
