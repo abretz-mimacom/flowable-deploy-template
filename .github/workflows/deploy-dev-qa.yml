@@ -36,13 +36,33 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.30.0'   # match your cluster
+
+      - name: Show cluster nodes (in-cluster auth)
+        run: |
+          API="https://kubernetes.default.svc"
+          TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+          CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+          kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get nodes
+
+      - name: Deploy manifests to apps namespace
+        run: |
+          API="https://kubernetes.default.svc"
+          TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+          CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+          kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" -n apps apply -f k8s/
+
       - name: Use kind kubeconfig for qa cluster
         run: |
           export KUBECONFIG="${{ needs.setup.outputs.kubeconfig-path }}"
           kind get clusters
           kubectl config use-context kind-qa || echo "Context qa not found - this job assumes cluster already set."
+          
       - name: Run deploy-flowable-platform.sh for dev/qa
         run: |
           cd $GITHUB_WORKSPACE
