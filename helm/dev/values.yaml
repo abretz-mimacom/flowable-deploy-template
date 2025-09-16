@@ -25,10 +25,10 @@ flowable:
     #       cpu: "1"
     #       memory: "2Gi"
 
-  work:
+  engage:
     enabled: false
 
-  engage:
+  work:
     enabled: true
     image:
   #    repository: localhost:5001/myflowable
@@ -95,15 +95,15 @@ flowable:
 
   elasticsearch:
     enabled: true
-    nodeGroup: master
-    master:
-      resources:
-        requests:
-          cpu: 1
-          memory: 2048Mi
-        limits:
-          cpu: 1
-          memory: 2048Mi
+    # nodeGroup: master
+    # master:
+    #   resources:
+    #     requests:
+    #       cpu: 1
+    #       memory: 2048Mi
+    #     limits:
+    #       cpu: 1
+    #       memory: 2048Mi
 
   design:
     enabled: true
