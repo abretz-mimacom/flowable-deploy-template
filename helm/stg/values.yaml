@@ -12,7 +12,7 @@ flowable:
   #   ingressClass: external
 
   postgres:
-    enabled: true
+    enabled: false
     # primary:
     #   extraEnvVars:
     #     - name: POSTGRESQL_MAX_CONNECTIONS
@@ -34,14 +34,14 @@ flowable:
   #    repository: localhost:5001/myflowable
       # tag: latest
       tag: 2025.1.01
-    replicas: 2 # multi-node deployment
+    replicas: 1 # multi-node deployment
     metrics:
       enabled: true
     javaOpts: "-XX:InitialRAMPercentage=70.0 -XX:MaxRAMPercentage=70.0 -XX:MinRAMPercentage=70.0"
     management:
       enabled: true
     envVariables:
-      flowable.inspect.enabled: "true"
+      flowable.inspect.enabled: "false"
   #    flowable.mail.server.host: greenmail.flowable.svc.cluster.local
   #    application.kafka-enabled: "true"
   #    spring.kafka.bootstrap-servers: "10.96.129.107:9092,10.96.119.140:9092,10.96.23.50:9092"
@@ -60,14 +60,14 @@ flowable:
   #    spring.ai.openai.chat.options.model: gpt-4o
   #    flowable.mail.server.force-to: "aaron@test.com"
       flowable.platform.enable-audit-log: "true"
-      management.elastic.metrics.export.enabled: "true"
-      flowable.async-history.enabled: "true"
-      flowable.async-executor.activate: "true"
+      management.elastic.metrics.export.enabled: "false"
+      # flowable.async-history.enabled: "true"
+      # flowable.async-executor.activate: "true"
   #    flowable.indexing.reindexing.database-read.pool.core-size: "8"
   #    flowable.async-history.thread-pool.max-pool-size: "8"
   #    flowable.async-history.thread-pool.core-pool-size: "8"
   #    flowable.async-history.thread-pool.queue-capacity: "8"
-      flowable.indexing.enabled: "true"
+      flowable.indexing.enabled: "false"
       # extraVolumes:
       #   - name: additional-classpath
       #     hostPath:
@@ -94,7 +94,7 @@ flowable:
       storageClass: standard
 
   elasticsearch:
-    enabled: true
+    enabled: false
     # nodeGroup: master
     # master:
     #   resources:
