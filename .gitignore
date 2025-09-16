@@ -1,3 +1,2 @@
 helm/charts/
 helm/Chart.lock
-kubectl
