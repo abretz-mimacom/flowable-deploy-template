@@ -34,6 +34,13 @@ flowable:
   #    repository: localhost:5001/myflowable
       # tag: latest
       tag: 2025.1.01
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "1.5Gi"
+      limits:
+        cpu: "1000m"
+        memory: "1.5Gi"
     replicas: 1 # multi-node deployment
     metrics:
       enabled: true
