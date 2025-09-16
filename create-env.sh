@@ -40,3 +40,5 @@ else
 	setup_cluster "$CLUSTER_NAME"
 	deploy_flowable "$NAMESPACE" "$RELEASE_NAME"
 fi
+
+k9s -c --crumbless

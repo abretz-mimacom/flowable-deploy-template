@@ -113,7 +113,7 @@ flowable:
     #       memory: 2048Mi
 
   design:
-    enabled: true
+    enabled: false
     image:
       # tag: latest
       tag: 2025.1.01
