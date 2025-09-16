@@ -12,7 +12,7 @@ flowable:
   #   ingressClass: external
 
   postgres:
-    enabled: true
+    enabled: false
     # primary:
     #   extraEnvVars:
     #     - name: POSTGRESQL_MAX_CONNECTIONS
@@ -25,10 +25,10 @@ flowable:
     #       cpu: "1"
     #       memory: "2Gi"
 
-  work:
+  engage:
     enabled: false
 
-  engage:
+  work:
     enabled: true
     image:
   #    repository: localhost:5001/myflowable
@@ -60,14 +60,14 @@ flowable:
   #    spring.ai.openai.chat.options.model: gpt-4o
   #    flowable.mail.server.force-to: "aaron@test.com"
       flowable.platform.enable-audit-log: "true"
-      management.elastic.metrics.export.enabled: "true"
-      flowable.async-history.enabled: "true"
-      flowable.async-executor.activate: "true"
+      management.elastic.metrics.export.enabled: "false"
+      # flowable.async-history.enabled: "true"
+      # flowable.async-executor.activate: "true"
   #    flowable.indexing.reindexing.database-read.pool.core-size: "8"
   #    flowable.async-history.thread-pool.max-pool-size: "8"
   #    flowable.async-history.thread-pool.core-pool-size: "8"
   #    flowable.async-history.thread-pool.queue-capacity: "8"
-      flowable.indexing.enabled: "true"
+      flowable.indexing.enabled: "false"
       # extraVolumes:
       #   - name: additional-classpath
       #     hostPath:
@@ -94,19 +94,19 @@ flowable:
       storageClass: standard
 
   elasticsearch:
-    enabled: true
-    nodeGroup: master
-    master:
-      resources:
-        requests:
-          cpu: 1
-          memory: 2048Mi
-        limits:
-          cpu: 1
-          memory: 2048Mi
+    enabled: false
+    # nodeGroup: master
+    # master:
+    #   resources:
+    #     requests:
+    #       cpu: 1
+    #       memory: 2048Mi
+    #     limits:
+    #       cpu: 1
+    #       memory: 2048Mi
 
   design:
-    enabled: false
+    enabled: true
     image:
       # tag: latest
       tag: 2025.1.01
