@@ -1,3 +1,4 @@
+```
 #
 # Copyright 2025, Flowable Licences AG.
 # This license is based on the software license agreement and terms and conditions in effect between the parties
@@ -368,3 +369,4 @@ spring.ai.retry.exclude-on-http-codes=429
 
 # Flowable Tutorial
 flowable.tutorial.enabled=false
+```
