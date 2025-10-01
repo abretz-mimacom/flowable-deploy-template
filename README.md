@@ -54,10 +54,12 @@ Then clicking "TERMINAL on the pane that is brought up:
 ![alt text](assets/terminal.png)
 
 Once the terminal is open, execute:
+    #### Make sure origin is set - submodule breaks Codespaces devcontainer ## TODO - fix
+        `git remote add origin https://github.com/abretz-mimacom/flowable-deploy-template`
     #### Install brew (to install kind&k9s)
         `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
         `echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc`
-        `eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)`
+        `eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"`
 
     #### Install kind and k9s
         `brew install kind derailed/k9s/k9s`
