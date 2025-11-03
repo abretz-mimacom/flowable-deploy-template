@@ -33,7 +33,7 @@ jobs:
   deploy-dev:
     needs: setup
     runs-on: [self-hosted, qa] # only runs on a self-hosted runner with the 'qa' label
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') && github.ref == 'refs/heads/release/*' }}
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') && github.ref == 'refs/heads/release/**' }}
     steps:
       - uses: actions/checkout@v4
 

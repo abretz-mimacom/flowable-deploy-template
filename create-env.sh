@@ -7,8 +7,8 @@ SINGLE_NODE="${5:-false}"
 setup_cluster() {
 	local cluster_name="$1"
 	echo "Setting up kind cluster '$cluster_name'"
-	echo "Single node value (boolean): '$SINGLE_NODE'"
-	bash -c "$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh $cluster_name $DISABLE_ARC $SINGLE_NODE"
+	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" false false
+	bash -c "echo \"Opening new shell\""
 }
 
 # Reusable function for deployment
@@ -20,6 +20,9 @@ deploy_flowable() {
 }
 
 # Get latest scripts
+# git remote add origin https://github.com/abretz-mimacom/flowable-deploy-template
+# git fetch
+# git checkout -b dev
 git submodule update --init --recursive --remote --force
 chmod a+x scripts/*
 
@@ -35,6 +38,7 @@ if [[ "$1" == "--all" ]]; then
 		set -- $config
 		setup_cluster "$3"
 		deploy_flowable "$1" "$2"
+		# kubectl config set-context --current  --cluster="$3" --namespace="$1"
 	done
 else
 	NAMESPACE="${1:-dev}"
@@ -42,6 +46,7 @@ else
 	CLUSTER_NAME="${3:-kind}"
 	setup_cluster "$CLUSTER_NAME"
 	deploy_flowable "$NAMESPACE" "$RELEASE_NAME"
+	# kubectl config set-context --current  --cluster="$CLUSTER_NAME"-kind --namespace="$NAMESPACE"
 fi
 
-k9s -c --crumbless
+#/bin/bash -c "k9s -c --crumbless"
