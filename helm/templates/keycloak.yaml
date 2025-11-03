@@ -1,0 +1,140 @@
+{{/*apiVersion: apps/v1*/}}
+{{/*kind: Deployment*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ .Release.Name }}-{{ .Values.keycloak.service.name }}*/}}
+{{/*  labels:*/}}
+{{/*    {{ include "flowable.defaultlabels" . }}*/}}
+{{/*spec:*/}}
+{{/*  replicas: {{ .Values.keycloak.replicas }}*/}}
+{{/*  selector:*/}}
+{{/*    matchLabels:*/}}
+{{/*      app.kubernetes.io/name: {{ .Release.Name }}-{{ include "flowable.template" . }}*/}}
+{{/*      app.kubernetes.io/instance: {{ .Release.Name }}*/}}
+{{/*  template:*/}}
+{{/*    metadata:*/}}
+{{/*      labels:*/}}
+{{/*        app.kubernetes.io/name: {{ .Release.Name }}-{{ include "flowable.template" . }}*/}}
+{{/*        app.kubernetes.io/instance: {{ .Release.Name }}*/}}
+{{/*        type: {{ .Release.Name }}-keycloak*/}}
+{{/*      annotations:*/}}
+{{/*    spec:*/}}
+{{/*#      imagePullSecrets:*/}}
+{{/*#        {{- $imageSecretNamePrefix := default .Release.Name .Values.flowable.release }}*/}}
+{{/*#        - name: {{ $imageSecretNamePrefix }}-{{ .Values.keycloak.image.secret}}*/}}
+{{/*      containers:*/}}
+{{/*        - name: {{ .Release.Name }}-{{ include "flowable.template" . }}*/}}
+{{/*          image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"*/}}
+{{/*          resources:*/}}
+{{/*{{ toYaml .Values.keycloak.resources | indent 12 }}*/}}
+{{/*          ports:*/}}
+{{/*            - containerPort: 8080*/}}
+{{/*          readinessProbe:*/}}
+{{/*            httpGet:*/}}
+{{/*              path: /auth/realms/global-sales-demo/*/}}
+{{/*              port: 8080*/}}
+{{/*              initialDelaySeconds: 120*/}}
+{{/*              timeoutSeconds: 5*/}}
+{{/*          livenessProbe:*/}}
+{{/*            httpGet:*/}}
+{{/*              path: /auth/realms/global-sales-demo/*/}}
+{{/*              port: 8080*/}}
+{{/*              initialDelaySeconds: 120*/}}
+{{/*              timeoutSeconds: 10*/}}
+{{/*              failureThreshold: 30*/}}
+{{/*          env:*/}}
+{{/*            - name: DB_DATABASE*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: db_database*/}}
+{{/*            - name: DB_ADDR*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: db_addr*/}}
+{{/*            - name: DB_USER*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: db_user*/}}
+{{/*            - name: DB_VENDOR*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: db_vendor*/}}
+{{/*            - name: DB_PASSWORD*/}}
+{{/*              valueFrom:*/}}
+{{/*                secretKeyRef:*/}}
+{{/*                  name: keycloak-secret*/}}
+{{/*                  key: db_password*/}}
+{{/*            - name: KEYCLOAK_USER*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: keycloak_user*/}}
+{{/*            - name: KEYCLOAK_PASSWORD*/}}
+{{/*              valueFrom:*/}}
+{{/*                secretKeyRef:*/}}
+{{/*                  name: keycloak-secret*/}}
+{{/*                  key: keycloak_password*/}}
+{{/*            - name: PROXY_ADDRESS_FORWARDING*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: proxy_address_forwarding*/}}
+{{/*            - name: KEYCLOAK_IMPORT*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: keycloak_import*/}}
+{{/*            - name: CUSTOM_REALM_KEYCLOAK_HOSTNAME*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: custom_realm_keycloak_hostname*/}}
+{{/*            - name: CUSTOM_REALM_LDAP_URI*/}}
+{{/*              valueFrom:*/}}
+{{/*                configMapKeyRef:*/}}
+{{/*                  name: keycloak-config*/}}
+{{/*                  key: custom_realm_ldap_uri*/}}
+{{/*---*/}}
+{{/*apiVersion: v1*/}}
+{{/*kind: Service*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ .Release.Name }}-{{ .Values.keycloak.service.name }}*/}}
+{{/*  labels:*/}}
+{{/*    {{ include "flowable.defaultlabels" . }}*/}}
+{{/*spec:*/}}
+{{/*  clusterIP: None*/}}
+{{/*  selector:*/}}
+{{/*    app.kubernetes.io/name: {{ .Release.Name }}-{{ include "flowable.template" . }}*/}}
+{{/*    app.kubernetes.io/instance: {{ .Release.Name }}*/}}
+{{/*  ports:*/}}
+{{/*    - name: keycloak*/}}
+{{/*      protocol: TCP*/}}
+{{/*      port: 8080*/}}
+{{/*      targetPort: 8080*/}}
+{{/*---*/}}
+{{/*apiVersion: v1*/}}
+{{/*kind: ConfigMap*/}}
+{{/*metadata:*/}}
+{{/*  name: keycloak-config*/}}
+{{/*data:*/}}
+{{/*  db_database: "{{ .Values.keycloak.database.name }}"*/}}
+{{/*  db_addr: "{{ .Release.Name }}-{{ .Values.flowable.postgres.service.name }}"*/}}
+{{/*  db_user: "{{ .Values.flowable.flowable.database.username }}"*/}}
+{{/*  db_vendor: postgres*/}}
+{{/*  keycloak_user: admin*/}}
+{{/*  proxy_address_forwarding: "true"*/}}
+{{/*  keycloak_import: /tmp/oauth2-stack-realm.json*/}}
+{{/*  custom_realm_keycloak_hostname: "https://{{ .Values.keycloak.domainName }}.{{ .Values.flowable.ingress.domain }}"*/}}
+{{/*  custom_realm_ldap_uri: "ldap://{{ .Release.Name }}-{{ .Values.openldap.service.name }}:389"*/}}
+{{/*---*/}}
+{{/*apiVersion: v1*/}}
+{{/*kind: Secret*/}}
+{{/*metadata:*/}}
+{{/*  name: keycloak-secret*/}}
+{{/*type: Opaque*/}}
+{{/*stringData:*/}}
+{{/*  db_password: "{{ .Values.flowable.flowable.database.password }}"*/}}
+{{/*  keycloak_password: faa@sales*/}}

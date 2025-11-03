@@ -1,11 +1,14 @@
 
 #!/bin/bash
 
+DISABLE_ARC="${4:-false}"
+SINGLE_NODE="${5:-false}"
 # Reusable function for cluster setup
 setup_cluster() {
 	local cluster_name="$1"
 	echo "Setting up kind cluster '$cluster_name'"
-	bash -c "$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh $cluster_name"
+	echo "Single node value (boolean): '$SINGLE_NODE'"
+	bash -c "$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh $cluster_name $DISABLE_ARC $SINGLE_NODE"
 }
 
 # Reusable function for deployment
