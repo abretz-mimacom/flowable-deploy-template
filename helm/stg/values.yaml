@@ -115,69 +115,33 @@ flowable:
       enabled: true
     envVariables:
       flowable.inspect.enabled: "true"
-  #    flowable.mail.server.host: greenmail.flowable.svc.cluster.local
-  #    application.kafka-enabled: "true"
-  #    spring.kafka.bootstrap-servers: "10.96.129.107:9092,10.96.119.140:9092,10.96.23.50:9092"
-  #    flowable.mail.server.host: "10.244.0.4"
-  #    flowable.mail.server.port: "3025"
-  #    flowable.mail.server.ssl-port: "3465"
-  #    flowable.mail.server.username: "aaron"
-  #    flowable.mail.server.password: "test"
-  #    flowable.mail.server.default-charset: "UTF-8"
-  #    flowable.mail.server.use-ssl: "false"
-  #    flowable.mail.server.use-tls: "false"
-  #    flowable.mail.server.default-from: "flowable@test.env.com"
-  #    application.ai.type: openai
-  #    spring.ai.openai.api-key: ""
-  #    spring.ai.openai.chat.options.temperature: 0.3
-  #    spring.ai.openai.chat.options.model: gpt-4o
-  #    flowable.mail.server.force-to: "aaron@test.com"
       flowable.platform.enable-audit-log: "true"
       management.elastic.metrics.export.enabled: "false"
-      # flowable.async-history.enabled: "true"
-      # flowable.async-executor.activate: "true"
-  #    flowable.indexing.reindexing.database-read.pool.core-size: "8"
-  #    flowable.async-history.thread-pool.max-pool-size: "8"
-  #    flowable.async-history.thread-pool.core-pool-size: "8"
-  #    flowable.async-history.thread-pool.queue-capacity: "8"
       flowable.indexing.enabled: "true"
       application.security.type: oauth2
-      spring.security.oauth2.client.registration.flowable-work.client-name: 'flowable-work'
-      spring.security.oauth2.client.registration.flowable-work.client-id: 'global-sales-demo'
-      spring.security.oauth2.client.registration.flowable-work.client-secret: 'a0d56896-efbc-4eb4-b10c-981e8d4abfb5'
-      spring.security.oauth2.client.registration.flowable-work.authorization-grant-type: 'authorization_code'
-      spring.security.oauth2.client.registration.flowable-work.scope: 'openid,profile'
-      spring.security.oauth2.client.provider.flowable-work.issuer-uri: 'http://host.docker.internal:9095/auth/realms/global-sales-demo'
-      spring.security.oauth2.client.provider.flowable-work.user-name-attribute: 'preferred_username'
-      flowable.security.oauth2.post-logout-redirect-url: 'http://localhost:8090/'
-#      flowable.security.oauth2.client.mapper.authorities-attributes: groups
-      flowable.security.oauth2.client.mapper.groups-attributes: 'https://someurl.com/claims/roles'
-#      flowable.security.oauth2.client.mapper.groups-attributes: roles
+      spring.security.oauth2.client.registration.flowable-work.provider: flowable-work
+      spring.security.oauth2.client.registration.flowable-work.client-id: global-sales-demo
+      spring.security.oauth2.client.registration.flowable-work.client-secret:
+      spring.security.oauth2.client.registration.flowable-work.authorization-grant-type: authorization_code
+      spring.security.oauth2.client.registration.flowable-work.scope: openid,profile
+      spring.security.oauth2.client.provider.flowable-work.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
+      spring.security.oauth2.client.provider.flowable-work.user-name-attribute: preferred_username
+      flowable.security.oauth2.post-logout-redirect-url: http://localhost:8090/
+      flowable.security.oauth2.client.mapper.groups-attributes: https://someurl.com/claims/roles
       flowable.security.oauth2.client.mapper.load-authorities-from-identity-service: false
-#      flowable.security.oauth2.client.mapper.idm-user-id-attributes: sub
-#      flowable.security.oauth2.client.mapper.user-definition-group-mappings[0].group-key: USER_DEFINITION_KEY_user-admin
-#      flowable.security.oauth2.client.mapper.user-definition-group-mappings[0].user-definition-key: user-admin
-#      flowable.security.oauth2.client.mapper.user-definition-group-mappings[1].group-key: flowableUser
-#      flowable.security.oauth2.client.mapper.user-definition-group-mappings[1].user-definition-key: user-default
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: 'USER_DEFINITION_KEY_user-admin'
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: 'user-admin'
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: 'AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV'
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: 'user-default'
+      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
+      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
+      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: USER_DEFINITION_KEY_user-admin
+      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
       # resource server config
-      spring.security.oauth2.resourceserver.jwt.issuer-uri: 'http://host.docker.internal:9095/auth/realms/global-sales-demo'
-      flowable.security.oauth2.resourceserver.jwt.principal-claim-name: 'preferred_username'
-      flowable.security.oauth2.resourceserver.mapper.authorities-attributes: 'groups'
-      flowable.security.oauth2.resourceserver.mapper.groups-attributes: 'https://someurl.com/claims/roles'
+      spring.security.oauth2.resourceserver.jwt.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
+      flowable.security.oauth2.resourceserver.jwt.principal-claim-name: preferred_username
+      flowable.security.oauth2.resourceserver.mapper.groups-attributes: https://someurl.com/claims/roles
       flowable.security.oauth2.resourceserver.mapper.load-authorities-from-identity-service: false
-#      flowable.security.oauth2.resourceserver.mapper.idm-user-id-attributes: sub
-#      flowable.security.oauth2.resourceserver.mapper.user-definition-group-mappings[0].group-key: USER_DEFINITION_KEY_user-admin
-#      flowable.security.oauth2.resourceserver.mapper.user-definition-group-mappings[0].user-definition-key: user-admin
-#      flowable.security.oauth2.resourceserver.mapper.user-definition-group-mappings[1].group-key: flowableUser
-#      flowable.security.oauth2.resourceserver.mapper.user-definition-group-mappings[1].user-definition-key: user-default
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: 'USER_DEFINITION_KEY_user-admin'
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: 'user-admin'
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: 'AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV'
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: 'user-default'
+      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
+      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
+      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: USER_DEFINITION_KEY_user-admin
+      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
       # extraVolumes:
       #   - name: additional-classpath
       #     hostPath:
@@ -224,13 +188,13 @@ flowable:
       application.design.security.type: oauth2
       spring.security.oauth2.client.registration.flowable-design.client-name: Flowable Design
       spring.security.oauth2.client.registration.flowable-design.client-id: global-sales-demo
-      spring.security.oauth2.client.registration.flowable-design.client-secret: a0d56896-efbc-4eb4-b10c-981e8d4abfb5
+      spring.security.oauth2.client.registration.flowable-design.client-secret:
       spring.security.oauth2.client.registration.flowable-design.authorization-grant-type: authorization_code
       spring.security.oauth2.client.registration.flowable-design.scope: openid,profile
       spring.security.oauth2.client.provider.flowable-design.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
       spring.security.oauth2.client.provider.flowable-design.user-name-attribute: preferred_username
       flowable.design.security.oauth2.authorities-attributes: https://someurl.com/claims/roles
-      flowable.design.security.oauth2.admin-authorities: USER_DEFINITION_KEY_user-admin
+      flowable.design.security.oauth2.admin-authorities: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
       flowable.design.remote.authentication.type: oauth2CurrentUser
       flowable.design.security.oauth2.post-logout-redirect-url: http://localhost:8083/
 
@@ -245,19 +209,16 @@ flowable:
       flowable.control.app.cluster-config.authentication-type: oauth2CurrentUser
       flowable.control.app.security.oauth2.post-logout-redirect-url: http://host.docker.internal:8082/
       flowable.control.app.frontend.form-based-logout: true
-      keycloak.hostname: http://host.docker.internal:9095
-      keycloak.realm: global-sales-demo
       spring.security.oauth2.client.registration.keycloak.provider: keycloak
       spring.security.oauth2.client.registration.keycloak.client-id: global-sales-demo
-      spring.security.oauth2.client.registration.keycloak.client-secret: a0d56896-efbc-4eb4-b10c-981e8d4abfb5
-      spring.security.oauth2.client.registration.keycloak.scope: openid
+      spring.security.oauth2.client.registration.keycloak.client-secret:
+      spring.security.oauth2.client.registration.keycloak.scope: openid,profile
       spring.security.oauth2.client.registration.keycloak.authorization-grant-type: authorization_code
       spring.security.oauth2.client.provider.keycloak.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
       spring.security.oauth2.client.provider.keycloak.user-name-attribute: preferred_username
-      flowable.control.app.security.oauth2.admin-authorities: USER_DEFINITION_KEY_user-admin
+      flowable.control.app.security.oauth2.admin-authorities: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
       flowable.control.app.security.oauth2.authorities-attributes: https://someurl.com/claims/roles
       flowable.control.app.security.oauth2.username-attribute: preferred_username
-      flowable.security.oauth2.post-logout-redirect-url: http://localhost:8082/
 
   flowable:
     dockerAuthSecret: flowable-flowable-regcred
