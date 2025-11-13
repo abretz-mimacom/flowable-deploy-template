@@ -53,7 +53,7 @@ flowable:
     #     # Enable/disbale the ingress configuration for the Helm chart.
     enabled: true
     # Define mapping type; 'host' for domain name mapping or 'path' for path name mapping
-    mappingType: host
+    mappingType: path
     # Define if https should be used to access the service urls (this is highly suggested)
     tls: false
   #  certManagerClusterIssuer: letsencrypt
@@ -63,7 +63,7 @@ flowable:
     allowOriginUrl: "*"
     bodySize: "20m"
     ingressClass: nginx
-    domain: flowable.me
+    domain: "$CODESPACE_NAME-443.github.dev"
     management:
       expose: false
     # Define a hostname override <service>.<hostOverride> instead of the default <service>.<release>.<domain>
@@ -72,7 +72,7 @@ flowable:
     # custom-annotation1: val1
 
   postgres:
-    enabled: false
+    enabled: true
     image:
       repository: bitnamilegacy/postgresql
       tag: 17.5.0
@@ -80,17 +80,17 @@ flowable:
       name: postgres
     envVariables:
       POSTGRES_MULTIPLE_DATABASES: "keycloak,internal"
-    # primary:
-    #   extraEnvVars:
-    #     - name: POSTGRESQL_MAX_CONNECTIONS
-    #       value: "400"
-    #   resources:
-    #     requests:
-    #       cpu: "500m"
-    #       memory: "1Gi"
-    #     limits:
-    #       cpu: "1"
-    #       memory: "2Gi"
+    primary:
+      extraEnvVars:
+        - name: POSTGRESQL_MAX_CONNECTIONS
+          value: "400"
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "1"
+          memory: "2Gi"
   engage:
     enabled: false
 
@@ -111,37 +111,39 @@ flowable:
     metrics:
       enabled: true
     javaOpts: "-XX:InitialRAMPercentage=70.0 -XX:MaxRAMPercentage=70.0 -XX:MinRAMPercentage=70.0"
+    contextPath: /work
     management:
       enabled: true
     envVariables:
+      server.contextPath: /work
       flowable.inspect.enabled: "true"
       flowable.platform.enable-audit-log: "true"
       management.elastic.metrics.export.enabled: "false"
       flowable.indexing.enabled: "true"
-      application.security.type: oauth2
-      spring.security.oauth2.client.registration.flowable-work.provider: flowable-work
-      spring.security.oauth2.client.registration.flowable-work.client-id: global-sales-demo
-      spring.security.oauth2.client.registration.flowable-work.client-secret:
-      spring.security.oauth2.client.registration.flowable-work.authorization-grant-type: authorization_code
-      spring.security.oauth2.client.registration.flowable-work.scope: openid,profile
-      spring.security.oauth2.client.provider.flowable-work.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
-      spring.security.oauth2.client.provider.flowable-work.user-name-attribute: preferred_username
-      flowable.security.oauth2.post-logout-redirect-url: http://localhost:8090/
-      flowable.security.oauth2.client.mapper.groups-attributes: https://someurl.com/claims/roles
-      flowable.security.oauth2.client.mapper.load-authorities-from-identity-service: false
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: USER_DEFINITION_KEY_user-admin
-      FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
-      # resource server config
-      spring.security.oauth2.resourceserver.jwt.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
-      flowable.security.oauth2.resourceserver.jwt.principal-claim-name: preferred_username
-      flowable.security.oauth2.resourceserver.mapper.groups-attributes: https://someurl.com/claims/roles
-      flowable.security.oauth2.resourceserver.mapper.load-authorities-from-identity-service: false
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: USER_DEFINITION_KEY_user-admin
-      FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
+      application.security.type: basic
+      # spring.security.oauth2.client.registration.flowable-work.provider: flowable-work
+      # spring.security.oauth2.client.registration.flowable-work.client-id: global-sales-demo
+      # spring.security.oauth2.client.registration.flowable-work.client-secret:
+      # spring.security.oauth2.client.registration.flowable-work.authorization-grant-type: authorization_code
+      # spring.security.oauth2.client.registration.flowable-work.scope: openid,profile
+      # spring.security.oauth2.client.provider.flowable-work.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
+      # spring.security.oauth2.client.provider.flowable-work.user-name-attribute: preferred_username
+      # flowable.security.oauth2.post-logout-redirect-url: https://vigilant-fortnight-q7g9q4pq57f9xx5-443.github.dev/work
+      # flowable.security.oauth2.client.mapper.groups-attributes: https://someurl.com/claims/roles
+      # flowable.security.oauth2.client.mapper.load-authorities-from-identity-service: false
+      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
+      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
+      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: USER_DEFINITION_KEY_user-admin
+      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
+      # # resource server config
+      # spring.security.oauth2.resourceserver.jwt.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
+      # flowable.security.oauth2.resourceserver.jwt.principal-claim-name: preferred_username
+      # flowable.security.oauth2.resourceserver.mapper.groups-attributes: https://someurl.com/claims/roles
+      # flowable.security.oauth2.resourceserver.mapper.load-authorities-from-identity-service: false
+      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
+      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
+      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: USER_DEFINITION_KEY_user-admin
+      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
       # extraVolumes:
       #   - name: additional-classpath
       #     hostPath:
@@ -184,19 +186,21 @@ flowable:
 
   design:
     enabled: true
+    contextPath: /design
     envVariables:
-      application.design.security.type: oauth2
-      spring.security.oauth2.client.registration.flowable-design.client-name: Flowable Design
-      spring.security.oauth2.client.registration.flowable-design.client-id: global-sales-demo
-      spring.security.oauth2.client.registration.flowable-design.client-secret:
-      spring.security.oauth2.client.registration.flowable-design.authorization-grant-type: authorization_code
-      spring.security.oauth2.client.registration.flowable-design.scope: openid,profile
-      spring.security.oauth2.client.provider.flowable-design.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
-      spring.security.oauth2.client.provider.flowable-design.user-name-attribute: preferred_username
-      flowable.design.security.oauth2.authorities-attributes: https://someurl.com/claims/roles
-      flowable.design.security.oauth2.admin-authorities: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
-      flowable.design.remote.authentication.type: oauth2CurrentUser
-      flowable.design.security.oauth2.post-logout-redirect-url: http://localhost:8083/
+      application.design.security.type: basic
+      server.contextPath: /design
+      # spring.security.oauth2.client.registration.flowable-design.client-name: Flowable Design
+      # spring.security.oauth2.client.registration.flowable-design.client-id: global-sales-demo
+      # spring.security.oauth2.client.registration.flowable-design.client-secret:
+      # spring.security.oauth2.client.registration.flowable-design.authorization-grant-type: authorization_code
+      # spring.security.oauth2.client.registration.flowable-design.scope: openid,profile
+      # spring.security.oauth2.client.provider.flowable-design.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
+      # spring.security.oauth2.client.provider.flowable-design.user-name-attribute: preferred_username
+      # flowable.design.security.oauth2.authorities-attributes: https://someurl.com/claims/roles
+      # flowable.design.security.oauth2.admin-authorities: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
+      # flowable.design.remote.authentication.type: oauth2CurrentUser
+      # flowable.design.security.oauth2.post-logout-redirect-url: https://vigilant-fortnight-q7g9q4pq57f9xx5-443.github.dev/design
 
 
   control:
@@ -204,21 +208,23 @@ flowable:
     image:
       # tag: latest
       tag: 2025.1.01
+    contextPath: /control
     envVariables:
-      flowable.control.app.security.type: oauth2
-      flowable.control.app.cluster-config.authentication-type: oauth2CurrentUser
-      flowable.control.app.security.oauth2.post-logout-redirect-url: http://host.docker.internal:8082/
-      flowable.control.app.frontend.form-based-logout: true
-      spring.security.oauth2.client.registration.keycloak.provider: keycloak
-      spring.security.oauth2.client.registration.keycloak.client-id: global-sales-demo
-      spring.security.oauth2.client.registration.keycloak.client-secret:
-      spring.security.oauth2.client.registration.keycloak.scope: openid,profile
-      spring.security.oauth2.client.registration.keycloak.authorization-grant-type: authorization_code
-      spring.security.oauth2.client.provider.keycloak.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
-      spring.security.oauth2.client.provider.keycloak.user-name-attribute: preferred_username
-      flowable.control.app.security.oauth2.admin-authorities: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
-      flowable.control.app.security.oauth2.authorities-attributes: https://someurl.com/claims/roles
-      flowable.control.app.security.oauth2.username-attribute: preferred_username
+      flowable.control.app.security.type: basic
+      server.contextPath: /control
+      flowable.control.app.cluster-config.authentication-type: basic
+      # flowable.control.app.security.oauth2.post-logout-redirect-url: https://vigilant-fortnight-q7g9q4pq57f9xx5-443.github.dev/control
+      # flowable.control.app.frontend.form-based-logout: true
+      # spring.security.oauth2.client.registration.keycloak.provider: keycloak
+      # spring.security.oauth2.client.registration.keycloak.client-id: global-sales-demo
+      # spring.security.oauth2.client.registration.keycloak.client-secret:
+      # spring.security.oauth2.client.registration.keycloak.scope: openid,profile
+      # spring.security.oauth2.client.registration.keycloak.authorization-grant-type: authorization_code
+      # spring.security.oauth2.client.provider.keycloak.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
+      # spring.security.oauth2.client.provider.keycloak.user-name-attribute: preferred_username
+      # flowable.control.app.security.oauth2.admin-authorities: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
+      # flowable.control.app.security.oauth2.authorities-attributes: https://someurl.com/claims/roles
+      # flowable.control.app.security.oauth2.username-attribute: preferred_username
 
   flowable:
     dockerAuthSecret: flowable-flowable-regcred
