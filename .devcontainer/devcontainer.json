@@ -1,3 +1,3 @@
 {
-  "postCreateCommand": "git remote set-url origin git@github.com:${localEnv:GITHUB_REPOSITORY}.git && git submodule sync --recursive && git submodule update --init --recursive"
+  "postCreateCommand": "git remote set-url origin git@github.com:abretz-mimacom/flowable-deploy-template.git && git submodule sync --recursive && git submodule update --init --recursive"
 }
