@@ -1,3 +1,4 @@
+{{- if .Values.openldap.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -202,3 +203,4 @@ metadata:
 type: Opaque
 stringData:
   ldap_admin_password: "{{ .Values.openldap.service.adminPassword }}"
+{{- end }}

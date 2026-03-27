@@ -1,3 +1,4 @@
+{{- if .Values.keycloak.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -48,13 +49,35 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.4.5
-          args: ["start", "--hostname=vigilant-fortnight-q7g9q4pq57f9xx5-443.app.github.dev", "--http-relative-path=/login"]
+          image: {{ print .Values.keycloak.image.repository ":" .Values.keycloak.image.tag  }}
+          args: ["start", "--hostname=friendly-spoon-jxgqqj6r7jqc5gp7-443.app.github.dev", "--http-relative-path=/login"]
           env:
+            - name: DB_DATABASE
+              value: keycloak
+            - name: DB_ADDR
+              value: keycloak-db
+            - name: DB_USER
+              value: flowable
+            - name: DB_PASSWORD
+              value: flowable
+            - name: DB_VENDOR
+              value: postgres
+            # KEYCLOAK_URL: "https://vigilant-fortnight-q7g9q4pq57f9xx5-9095.app.github.dev/"
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: test
+      # See https://github.com/keycloak/keycloak-containers/blob/master/server/README.md
+            - name: KEYCLOAK_IMPORT
+              value: /tmp/oauth2-stack-realm.json
+            - name: CUSTOM_REALM_KEYCLOAK_HOSTNAME
+              value: {{ .Values.keycloak.host}}/login/auth/realms/global-sales-demo
+            - name: CUSTOM_REALM_LDAP_URI
+              value: "ldap://openldap:389"
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               value: "admin"
             - name: KC_BOOTSTRAP_ADMIN_PASSWORD
-              value: "admin"
+              value: "test"
             # In a production environment, add a TLS certificate to Keycloak to either end-to-end encrypt the traffic between
             # the client or Keycloak, or to encrypt the traffic between your proxy and Keycloak.
             # Respect the proxy headers forwarded by the reverse proxy
@@ -101,20 +124,20 @@ spec:
               containerPort: 57800
           startupProbe:
             httpGet:
-              path: /login/health/started
-              port: 9000
-            periodSeconds: 1
-            failureThreshold: 600              
+              path: /health
+              port: 8080
+            periodSeconds: 10
+            failureThreshold: 60              
           readinessProbe:
             httpGet:
-              path: /login/health/ready
-              port: 9000
+              path: /health
+              port: 8080
             periodSeconds: 10
             failureThreshold: 3              
           livenessProbe:
             httpGet:
-              path: /login/health/live
-              port: 9000
+              path: /health
+              port: 8080
             periodSeconds: 10
             failureThreshold: 3              
           resources:
@@ -180,3 +203,5 @@ spec:
       port: 5432
       targetPort: 5432
   type: ClusterIP
+
+{{- end }}

@@ -49,4 +49,8 @@ else
 	# kubectl config set-context --current  --cluster="$CLUSTER_NAME"-kind --namespace="$NAMESPACE"
 fi
 
+## Build keycloak image
+docker build -t global-sales-demo:12.0.4 docker/keycloak
+docker tag global-sales-demo:12.0.4 localhost:5001/global-sales-demo:12.0.4
+docker push localhost:5001/global-sales-demo:12.0.4
 #/bin/bash -c "k9s -c --crumbless"

@@ -551,10 +551,10 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "https://vigilant-fortnight-q7g9q4pq57f9xx5-443.app.github.dev/*"
+        "https://friendly-spoon-jxgqqj6r7jqc5gp7-443.app.github.dev/*"
       ],
       "webOrigins": [
-        "https://vigilant-fortnight-q7g9q4pq57f9xx5-443.app.github.dev/*"
+        "https://friendly-spoon-jxgqqj6r7jqc5gp7-443.app.github.dev/*"
       ],
       "notBefore": 0,
       "bearerOnly": false,

@@ -1,0 +1,3 @@
+{
+  "postCreateCommand": "git remote set-url origin git@github.com:${localEnv:GITHUB_REPOSITORY}.git && git submodule sync --recursive && git submodule update --init --recursive"
+}
