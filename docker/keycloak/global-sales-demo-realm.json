@@ -542,19 +542,19 @@
     {
       "id": "5889711f-eb5e-44fe-9f63-77ec290db2d1",
       "clientId": "global-sales-demo",
-      "rootUrl": "",
-      "adminUrl": "http://localhost:9095/",
-      "baseUrl": "",
+      "rootUrl": "https://supreme-robot-rjxpp4976gq3p96v-443.app.github.dev/login",
+      "adminUrl": "https://supreme-robot-rjxpp4976gq3p96v-443.app.github.dev/login",
+      "baseUrl": "https://supreme-robot-rjxpp4976gq3p96v-443.app.github.dev/login",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "some-super-secret-key",
       "redirectUris": [
-        "https://friendly-spoon-jxgqqj6r7jqc5gp7-443.app.github.dev/*"
+        "https://supreme-robot-rjxpp4976gq3p96v-443.app.github.dev/login/*"
       ],
       "webOrigins": [
-        "https://friendly-spoon-jxgqqj6r7jqc5gp7-443.app.github.dev/*"
+        "https://supreme-robot-rjxpp4976gq3p96v-443.app.github.dev/*"
       ],
       "notBefore": 0,
       "bearerOnly": false,

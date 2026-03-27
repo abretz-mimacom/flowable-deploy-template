@@ -9,6 +9,31 @@ setup_cluster() {
 	echo "Setting up kind cluster '$cluster_name'"
 	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" false false
 	bash -c "echo \"Opening new shell\""
+
+	export BASE_URL="${CODESPACE_NAME}-443.app.github.dev"
+	export LOGIN_URL="${BASE_URL}/login"
+	## set redirect and weborigin uris for keycloak container
+	jq --arg uri "https://${LOGIN_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .redirectUris[0] = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json	
+	
+	jq --arg uri "https://${BASE_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .webOrigins[0] = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json
+
+	export KEYCLOAK_CLIENT_SECRET=some-super-secret-key
+	jq --arg secret "${KEYCLOAK_CLIENT_SECRET}" '.clients[] |= if .clientId == "global-sales-demo" then .secret = $secret else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json
+
+	jq --arg uri "https://${LOGIN_URL}" '.clients[] |= if .clientId == "global-sales-demo" then .adminUrl = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json
+
+	brew install yq
+	bash -c "echo \"Opening new shell\""
+	yq -i '.keycloak.host = strenv(LOGIN_URL)' helm/stg/values.yaml
+
+	## Build keycloak image
+	docker build -t keycloak-global-sales:12.0.8 docker/keycloak
+	docker tag keycloak-global-sales:12.0.8 localhost:5001/keycloak-global-sales:20.0.0
+	docker push localhost:5001/keycloak-global-sales:20.0.0
 }
 
 # Reusable function for deployment
@@ -19,12 +44,6 @@ deploy_flowable() {
 	"$CODESPACE_VSCODE_FOLDER/scripts/deploy-flowable-platform.sh" "$namespace" "$release_name"
 }
 
-# Get latest scripts
-# git remote add origin https://github.com/abretz-mimacom/flowable-deploy-template
-# git fetch
-# git checkout -b dev
-git submodule update --init --recursive --remote --force
-chmod a+x scripts/*
 
 # Check for --all flag
 if [[ "$1" == "--all" ]]; then
@@ -49,8 +68,4 @@ else
 	# kubectl config set-context --current  --cluster="$CLUSTER_NAME"-kind --namespace="$NAMESPACE"
 fi
 
-## Build keycloak image
-docker build -t global-sales-demo:12.0.4 docker/keycloak
-docker tag global-sales-demo:12.0.4 localhost:5001/global-sales-demo:12.0.4
-docker push localhost:5001/global-sales-demo:12.0.4
-#/bin/bash -c "k9s -c --crumbless"
+/bin/bash -c "k9s -c --crumbless"
