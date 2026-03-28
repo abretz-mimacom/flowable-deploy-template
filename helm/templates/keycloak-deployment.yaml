@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
     - protocol: TCP
-      port: 8080
+      port: 443
       targetPort: http
       name: http
   selector:
@@ -84,8 +84,14 @@ spec:
               value: "/login"
             - name: KC_HOSTNAME
               value: {{ .Values.keycloak.host}}
-            - name: KC_ADMIN_URL
-              value: https://{{ .Values.keycloak.host }}/admin
+            - name: KC_HOSTNAME_BASE_URL
+              value: "https://{{ .Values.keycloak.host}}"
+            - name: KC_HOSTNAME_ADMIN
+              value: {{ .Values.keycloak.host }}
+            - name: KC_HTTP_PORT
+              value: "443"
+            # - name: KC_HOSTNAME_ADMIN_URL
+            #   value: https://{{ .Values.keycloak.host}}/login
             - name: KC_HOSTNAME_STRICT
               value: "false"
             - name: KC_HEALTH_ENABLED
@@ -114,7 +120,7 @@ spec:
               value: 'keycloak'
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 443
             - name: jgroups
               containerPort: 7800
             - name: jgroups-fd
@@ -122,19 +128,19 @@ spec:
           startupProbe:
             httpGet:
               path: /login/health
-              port: 8080
+              port: 443
             periodSeconds: 10
             failureThreshold: 60              
           readinessProbe:
             httpGet:
               path: /login/health
-              port: 8080
+              port: 443
             periodSeconds: 10
             failureThreshold: 3              
           livenessProbe:
             httpGet:
               path: /login/health
-              port: 8080
+              port: 443
             periodSeconds: 10
             failureThreshold: 3              
 ---

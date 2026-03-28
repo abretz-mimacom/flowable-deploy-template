@@ -10,7 +10,7 @@ setup_cluster() {
 	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" false false
 	bash -c "echo \"Opening new shell\""
 
-	export BASE_URL="${CODESPACE_NAME}-443.app.github.dev"
+	export BASE_URL="${CODESPACE_NAME}-80.app.github.dev"
 	export LOGIN_URL="${BASE_URL}/login"
 	## set redirect and weborigin uris for keycloak container
 	jq --arg uri "https://${LOGIN_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .redirectUris[0] = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
