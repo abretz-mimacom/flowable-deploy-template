@@ -48,8 +48,6 @@ spec:
           {{- if .Values.openldap.image.pullPolicy }}
           imagePullPolicy: {{ .Values.openldap.image.pullPolicy }}
           {{- end }}
-          resources:
-{{ toYaml .Values.openldap.resources | indent 12 }}
           ports:
             - containerPort: 389
           volumeMounts:
