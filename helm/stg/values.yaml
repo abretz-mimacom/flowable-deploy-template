@@ -22,6 +22,8 @@ openldap:
     #    secret: gitlab-regcred
 keycloak:
   enabled: true
+  ingress:
+    enabled: true
   replicas: 1
   # domainName: login
   host: supreme-robot-rjxpp4976gq3p96v-80.app.github.dev

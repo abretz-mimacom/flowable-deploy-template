@@ -7,33 +7,34 @@ SINGLE_NODE="${5:-false}"
 setup_cluster() {
 	local cluster_name="$1"
 	echo "Setting up kind cluster '$cluster_name'"
+	export EXTRA_MOUNT_HOST_PATH=docker/keycloak
 	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" false false
 	bash -c "echo \"Opening new shell\""
 
-	export BASE_URL="${CODESPACE_NAME}-80.app.github.dev"
-	export LOGIN_URL="${BASE_URL}/login"
+	export KEYCLOAK_BASE_URL="${CODESPACE_NAME}-80.app.github.dev"
+	# export LOGIN_URL="${KEYCLOAK_BASE_URL}/login"
 	## set redirect and weborigin uris for keycloak container
-	jq --arg uri "https://${LOGIN_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .redirectUris[0] = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
-	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json	
+	jq --arg uri "https://${KEYCLOAK_BASE_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .redirectUris[0] = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/realm.json	
 	
-	jq --arg uri "https://${BASE_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .webOrigins[0] = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
-	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json
+	jq --arg uri "https://${KEYCLOAK_BASE_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .webOrigins[0] = $uri else . end' docker/keycloak/realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/realm.json
 
 	export KEYCLOAK_CLIENT_SECRET=some-super-secret-key
-	jq --arg secret "${KEYCLOAK_CLIENT_SECRET}" '.clients[] |= if .clientId == "global-sales-demo" then .secret = $secret else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
-	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json
+	jq --arg secret "${KEYCLOAK_CLIENT_SECRET}" '.clients[] |= if .clientId == "global-sales-demo" then .secret = $secret else . end' docker/keycloak/realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/realm.json
 
-	jq --arg uri "https://${LOGIN_URL}" '.clients[] |= if .clientId == "global-sales-demo" then .adminUrl = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
-	mv /tmp/global-sales-demo-realm.json docker/keycloak/global-sales-demo-realm.json
+	jq --arg uri "https://${KEYCLOAK_BASE_URL}" '.clients[] |= if .clientId == "global-sales-demo" then .adminUrl = $uri else . end' docker/keycloak/realm.json > /tmp/global-sales-demo-realm.json
+	mv /tmp/global-sales-demo-realm.json docker/keycloak/realm.json
 
 	brew install yq
 	bash -c "echo \"Opening new shell\""
-	yq -i '.keycloak.host = strenv(LOGIN_URL)' helm/stg/values.yaml
+	yq -i '.keycloak.host = strenv(KEYCLOAK_BASE_URL)' helm/stg/values.yaml
 
 	## Build keycloak image
-	docker build -t keycloak-global-sales:12.0.8 docker/keycloak
-	docker tag keycloak-global-sales:12.0.8 localhost:5001/keycloak-global-sales:20.0.0
-	docker push localhost:5001/keycloak-global-sales:20.0.0
+	# docker build -t keycloak-global-sales:12.0.8 docker/keycloak
+	# docker tag keycloak-global-sales:12.0.8 localhost:5001/keycloak-global-sales:20.0.0
+	# docker push localhost:5001/keycloak-global-sales:20.0.0
 }
 
 # Reusable function for deployment
