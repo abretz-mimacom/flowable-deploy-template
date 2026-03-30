@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git remote add origin x
+git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
 git fetch
 git checkout dev
 
