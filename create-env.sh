@@ -8,10 +8,10 @@ setup_cluster() {
 	local cluster_name="$1"
 	echo "Setting up kind cluster '$cluster_name'"
 	export EXTRA_MOUNT_HOST_PATH=docker/keycloak
-	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" false false
+	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" $DISABLE_ARC $SINGLE_NODE
 	bash -c "echo \"Opening new shell\""
 
-	export KEYCLOAK_BASE_URL="${CODESPACE_NAME}-80.app.github.dev"
+	export KEYCLOAK_BASE_URL="${CODESPACE_NAME}-443.app.github.dev"
 	# export LOGIN_URL="${KEYCLOAK_BASE_URL}/login"
 	## set redirect and weborigin uris for keycloak container
 	jq --arg uri "https://${KEYCLOAK_BASE_URL}/*" '.clients[] |= if .clientId == "global-sales-demo" then .redirectUris[0] = $uri else . end' docker/keycloak/global-sales-demo-realm.json > /tmp/global-sales-demo-realm.json
@@ -29,7 +29,8 @@ setup_cluster() {
 
 	brew install yq
 	bash -c "echo \"Opening new shell\""
-	yq -i '.keycloak.host = strenv(KEYCLOAK_BASE_URL)' helm/stg/values.yaml
+	export AUTH_REDIRECT_URL="https://$CODESPACE_NAME}-443.app.github.dev/work/login/oauth2/code/github"
+	yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 
 	## Build keycloak image
 	# docker build -t keycloak-global-sales:12.0.8 docker/keycloak
