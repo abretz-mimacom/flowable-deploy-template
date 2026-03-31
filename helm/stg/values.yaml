@@ -1,7 +1,6 @@
 global:
   security:
     allowInsecureImages: true
-    
 flowable:
   ingress:
     # Leave disabled to define our own ingress in templates/
@@ -26,7 +25,7 @@ flowable:
     image:
       #    repository: localhost:5001/myflowable
       # tag: latest
-      tag: 2025.1.01
+      tag: 2025.2.03
     replicas: 1 # multi-node deployment
     metrics:
       enabled: true
@@ -41,7 +40,7 @@ flowable:
       flowable.inspect.enabled: "true"
       flowable.platform.enable-audit-log: "true"
       management.elastic.metrics.export.enabled: "false"
-      flowable.indexing.enabled: "false"
+      flowable.indexing.enabled: "true"
       application.security.type: oauth2
       # spring.security.oauth2.client.registration.github.provider: github
       spring.security.oauth2.client.registration.github.client-id: ${GITHUB_OAUTH_CLIENT_ID}
@@ -49,96 +48,78 @@ flowable:
       spring.security.oauth2.client.registration.github.client-name: stg-flowable
       # spring.security.oauth2.client.registration.github.authorization-grant-type: session_code
       spring.security.oauth2.client.registration.github.scope: "read:user,user:email"
-      spring.security.oauth2.client.registration.github.redirect-uri: https://expert-space-funicular-97wr4pjqq6rfp79v-443.app.github.dev/work/login/oauth2/code/github
+      spring.security.oauth2.client.registration.github.redirect-uri: https://ominous-halibut-wrxpjwg9xp6f5965-443.app.github.dev/work/login/oauth2/code/github
       # spring.security.oauth2.client.provider.github.issuer-uri: https://github.com/login/oauth/access_token
       # spring.security.oauth2.client.provider.github.user-name-attribute: email
-      flowable.security.oauth2.post-logout-redirect-url: https://expert-space-funicular-97wr4pjqq6rfp79v-443.app.github.dev/work
+      flowable.security.oauth2.post-logout-redirect-url: https://ominous-halibut-wrxpjwg9xp6f5965-443.app.github.dev/work/
       flowable.security.oauth2.client.mapper.default-user-definition-key: user-admin
-      logging.level.org.springframework.security.oauth2.client: DEBUG
-      # flowable.security.oauth2.client.mapper.groups-attributes: groups
-      # flowable.security.oauth2.client.mapper.load-authorities-from-identity-service: false
-      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: demo-work-admin
-      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
-      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: demo-work-user
-      # FLOWABLE_SECURITY_OAUTH2_CLIENT_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
-      # # resource server config
-      # spring.security.oauth2.resourceserver.jwt.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
-      # flowable.security.oauth2.resourceserver.jwt.principal-claim-name: preferred_username
-      # flowable.security.oauth2.resourceserver.mapper.groups-attributes: https://someurl.com/claims/roles
-      # flowable.security.oauth2.resourceserver.mapper.load-authorities-from-identity-service: false
-      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_GROUP-KEY: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
-      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_0_USER-DEFINITION-KEY: user-admin
-      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_GROUP-KEY: USER_DEFINITION_KEY_user-admin
-      # FLOWABLE_SECURITY_OAUTH2_RESOURCESERVER_MAPPER_USER-DEFINITION-GROUP-MAPPINGS_1_USER-DEFINITION-KEY: user-default
+      flowable.security.basic-auth.enabled: "true"
+      flowable.security.basic-auth.username: admin
+      flowable.security.basic-auth.password: ${GITHUB_OAUTH_CLIENT_SECRET}
+      flowable.security.basic-auth.granted-authorities: USER_DEFINITION_KEY_user-admin,GROUP_flowableAdministrator
+      logging.level.org.springframework.security: DEBUG
     envSecrets:
-      - name:  GITHUB_OAUTH_CLIENT_ID
+      - name: GITHUB_OAUTH_CLIENT_ID
         secretName: flowable-github-oauth
-        secretKey: clientId   
-      - name:  GITHUB_OAUTH_CLIENT_SECRET
+        secretKey: clientId
+      - name: GITHUB_OAUTH_CLIENT_SECRET
         secretName: flowable-github-oauth
-        secretKey: clientSecret     
-      # extraVolumes:
-      #   - name: additional-classpath
-      #     hostPath:
-      #       path: /Users/aaron.bretz/.m2/repository/org/flowable/jobapplication/0.0.1-SNAPSHOT/
-      #       type: Directory
-      # extraVolumeMounts:
-      #   - name: additional-classpath
-      #     mountPath: /additional-classpath/
-      # initContainers:
-      #   - name: copy-jar
-      #     image: busybox
-      #     command: ["sh", "-c", "cp /jars/my-lib.jar /additional-classpath/"]
-      #     volumeMounts:
-      #       - name: additional-classpath
-      #         mountPath: /additonal-classpath
-      #       - name: jar-source
-      #         mountPath:
-      #     volumeMounts:
-      #       - name: additional-classpath
-      #         mountPath: /additional-classpath/
-      # extraImagePullSecrets: flw-docker-auth
+        secretKey: clientSecret
+        # extraVolumes:
+        #   - name: additional-classpath
+        #     hostPath:
+        #       path: /Users/aaron.bretz/.m2/repository/org/flowable/jobapplication/0.0.1-SNAPSHOT/
+        #       type: Directory
+        # extraVolumeMounts:
+        #   - name: additional-classpath
+        #     mountPath: /additional-classpath/
+        # initContainers:
+        #   - name: copy-jar
+        #     image: busybox
+        #     command: ["sh", "-c", "cp /jars/my-lib.jar /additional-classpath/"]
+        #     volumeMounts:
+        #       - name: additional-classpath
+        #         mountPath: /additonal-classpath
+        #       - name: jar-source
+        #         mountPath:
+        #     volumeMounts:
+        #       - name: additional-classpath
+        #         mountPath: /additional-classpath/
+        # extraImagePullSecrets: flw-docker-auth
     storage:
       provisioner: rancher.io/local-path
       storageClass: standard
   elasticsearch:
-    enabled: false
+    enabled: true
     image:
       repository: bitnamilegacy/elasticsearch
       tag: 8.18.0
     nodeGroup: master
-    # master:
-    #   resources:
-    #     requests:
-    #       cpu: 250m
-    #       memory: 1024Mi
-    #     limits:
-    #       cpu: 500m
-    #       memory: 2048Mi
+    master:
+      resources:
+        requests:
+          cpu: 250m
+          memory: 1024Mi
+        limits:
+          cpu: 500m
+          memory: 2048Mi
   design:
     enabled: false
   control:
-    enabled: false
+    enabled: true
     image:
       # tag: latest
-      tag: 2025.1.01
+      tag: 2025.2.03
     contextPath: /control
     envVariables:
       flowable.control.app.security.type: basic
+      flowable.control.app.cluster-config.password: ${GITHUB_OAUTH_CLIENT_SECRET}
       server.contextPath: /control
       flowable.control.app.cluster-config.authentication-type: basic
-      # flowable.control.app.security.oauth2.post-logout-redirect-url: https://vigilant-fortnight-q7g9q4pq57f9xx5-443.github.dev/control
-      # flowable.control.app.frontend.form-based-logout: true
-      # spring.security.oauth2.client.registration.keycloak.provider: keycloak
-      # spring.security.oauth2.client.registration.keycloak.client-id: global-sales-demo
-      # spring.security.oauth2.client.registration.keycloak.client-secret:
-      # spring.security.oauth2.client.registration.keycloak.scope: openid,profile
-      # spring.security.oauth2.client.registration.keycloak.authorization-grant-type: authorization_code
-      # spring.security.oauth2.client.provider.keycloak.issuer-uri: http://host.docker.internal:9095/auth/realms/global-sales-demo
-      # spring.security.oauth2.client.provider.keycloak.user-name-attribute: preferred_username
-      # flowable.control.app.security.oauth2.admin-authorities: AIGI-ROLE-SUBMISSIONINTAKE-USER-DEV
-      # flowable.control.app.security.oauth2.authorities-attributes: https://someurl.com/claims/roles
-      # flowable.control.app.security.oauth2.username-attribute: preferred_username
+    envSecrets:
+      - name: GITHUB_OAUTH_CLIENT_SECRET
+        secretName: flowable-github-oauth
+        secretKey: clientSecret
   flowable:
     dockerAuthSecret: flowable-flowable-regcred
     database:
