@@ -5,6 +5,7 @@ flowable:
   ingress:
     # Leave disabled to define our own ingress in templates/
     enabled: false
+    host: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg
   postgres:
     enabled: true
     image:
@@ -30,30 +31,30 @@ flowable:
     metrics:
       enabled: true
     javaOpts: "-XX:InitialRAMPercentage=70.0 -XX:MaxRAMPercentage=70.0 -XX:MinRAMPercentage=70.0"
-    contextPath: /work
+    contextPath: /stg/work
     management:
       enabled: true
+    extraEnvFrom:
+      - configMapRef:
+          name: oauth2-generic-config
     envVariables:
-      server.contextPath: /work
+      server.contextPath: /stg/work
       server.tomcat.redirect-context-root: false
       server.forward-headers-strategy: framework
       flowable.inspect.enabled: "true"
       flowable.platform.enable-audit-log: "true"
-      management.elastic.metrics.export.enabled: "false"
+      management.elastic.metrics.export.enabled: "true"
       flowable.indexing.enabled: "true"
       application.security.type: oauth2
-      # spring.security.oauth2.client.registration.github.provider: github
-      spring.security.oauth2.client.registration.github.client-id: ${GITHUB_OAUTH_CLIENT_ID}
-      spring.security.oauth2.client.registration.github.client-secret: ${GITHUB_OAUTH_CLIENT_SECRET}
-      spring.security.oauth2.client.registration.github.client-name: stg-flowable
-      # spring.security.oauth2.client.registration.github.authorization-grant-type: session_code
-      spring.security.oauth2.client.registration.github.scope: "read:user,user:email"
-      spring.security.oauth2.client.registration.github.redirect-uri: https://ominous-halibut-wrxpjwg9xp6f5965-443.app.github.dev/work/login/oauth2/code/github
-      # spring.security.oauth2.client.provider.github.issuer-uri: https://github.com/login/oauth/access_token
-      # spring.security.oauth2.client.provider.github.user-name-attribute: email
-      flowable.security.oauth2.post-logout-redirect-url: https://ominous-halibut-wrxpjwg9xp6f5965-443.app.github.dev/work/
-      flowable.security.oauth2.client.mapper.default-user-definition-key: user-admin
-      flowable.security.basic-auth.enabled: "true"
+      spring.security.oauth2.client.registration.github.redirect-uri: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg/work/login/oauth2/code/github
+      flowable.security.oauth2.client.mapper.user-definition-key-attribute: location
+      flowable.security.oauth2.post-logout-redirect-url: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg/work/#/
+      flowable.security.oauth2.client.mapper.default-user-definition-key: user-default
+      # spring.security.oauth2.resourceserver.jwt.issuer-uri: https://github.com/login/oauth/access_token
+      flowable.security.oauth2.resourceserver.jwt.principal-claim-name: id
+      flowable.security.oauth2.resourceserver.mapper.user-definition-key-attribute: location
+      flowable.security.oauth2.resourceserver.mapper.default-user-definition-key: user-admin
+      flowable.security.basic-auth.enabled: "false"
       flowable.security.basic-auth.username: admin
       flowable.security.basic-auth.password: ${GITHUB_OAUTH_CLIENT_SECRET}
       flowable.security.basic-auth.granted-authorities: USER_DEFINITION_KEY_user-admin,GROUP_flowableAdministrator
@@ -86,6 +87,13 @@ flowable:
         #       - name: additional-classpath
         #         mountPath: /additional-classpath/
         # extraImagePullSecrets: flw-docker-auth
+    resources:
+      requests:
+        cpu: "1"
+        memory: "1024Mi"
+      limits:
+        cpu: "1.5"
+        memory: "2048Mi"
     storage:
       provisioner: rancher.io/local-path
       storageClass: standard
@@ -110,16 +118,37 @@ flowable:
     image:
       # tag: latest
       tag: 2025.2.03
-    contextPath: /control
+    contextPath: /stg/control
+    extraEnvFrom:
+      - configMapRef:
+          name: oauth2-generic-config
     envVariables:
-      flowable.control.app.security.type: basic
-      flowable.control.app.cluster-config.password: ${GITHUB_OAUTH_CLIENT_SECRET}
-      server.contextPath: /control
-      flowable.control.app.cluster-config.authentication-type: basic
+      # flowable.control.app.security.type: basic
+      # flowable.control.app.cluster-config.password: ${GITHUB_OAUTH_CLIENT_SECRET}
+      server.contextPath: /stg/control
+      # flowable.control.app.cluster-config.authentication-type: basic
+      flowable.control.app.security.type: oauth2
+      flowable.control.app.cluster-config.authentication-type: oauth2CurrentUser
+      spring.security.oauth2.client.registration.github.redirect-uri: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg/control/login/oauth2/code/github
+      flowable.control.app.security.oauth2.username-attribute: login
+      flowable.control.app.security.oauth2.authorities-attributes: location
+      flowable.control.app.security.oauth2.admin-authorities: user-admin
+      flowable.control.app.security.oauth2.post-logout-redirect-url: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg/control/#/
+      logging.level.org.springframework.security: DEBUG
     envSecrets:
       - name: GITHUB_OAUTH_CLIENT_SECRET
         secretName: flowable-github-oauth
         secretKey: clientSecret
+      - name: GITHUB_OAUTH_CLIENT_ID
+        secretName: flowable-github-oauth
+        secretKey: clientId
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "512Mi"
+      limits:
+        cpu: "800m"
+        memory: "1024Mi"
   flowable:
     dockerAuthSecret: flowable-flowable-regcred
     database:

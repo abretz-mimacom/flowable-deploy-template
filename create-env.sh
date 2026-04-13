@@ -54,4 +54,24 @@ else
 	# kubectl config set-context --current  --cluster="$CLUSTER_NAME"-kind --namespace="$NAMESPACE"
 fi
 
-/bin/bash -c "k9s -c --crumbless"
+if [ $1 == "--all" || $1 == "qa" ]; then
+	echo "qa-dev Flowable URLS: \n"
+	echo "Flowable Work: " $DEV_INGRESS_HOST "work/"
+	echo "Flowable Design: " $DEV_INGRESS_HOST "design/"
+	echo "Flowable Control: " $DEV_INGRESS_HOST "control/"
+
+	echo "qa-test Flowable URLS: \n"
+	echo "Flowable Work: " $TEST_INGRESS_HOST "work/"
+	echo "Flowable Control: " $TEST_INGRESS_HOST "control/"
+fi
+
+if [ $1 == "--all" || $1 == "prod" ]; then
+	echo "prod-stg Flowable URLS: \n"
+	echo "Flowable Work: " $STG_INGRESS_HOST "work/"
+	echo "Flowable Control: " $STG_INGRESS_HOST "control/"
+fi
+
+echo "It is more then likely that you will receive a 503 from these URL's after initial deploy. The pods are still starting."
+echo "To see the pods/clusters while they boot, including runtime logs, use the CLI tool K9s. Start by typing the command 'k9s -c --crumbless', then select the cluster you want to interact with to see the pods."
+
+source bash

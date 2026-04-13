@@ -2,4 +2,5 @@ helm/charts/
 helm/Chart.lock
 kubectl
 
+flowable.license
 docker/keycloak/realm.json

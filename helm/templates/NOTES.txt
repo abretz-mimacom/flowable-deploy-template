@@ -10,4 +10,12 @@ To see deployment status, try:
   $ kubectl get pods -n {{ .Release.Namespace }}
 
 Flowable Work:
-{{ index .Values.flowable.work.envVariables "flowable.security.oauth2.post-logout-redirect-url" }}
+{{ index .Values.flowable.ingress.host }}/work
+
+{{- if eq "dev" .Release.Namespace }}
+Flowable Design:
+{{ index .Values.flowable.ingress.host }}/design
+{{- end }}
+
+Flowable Control:
+{{ index .Values.flowable.ingress.host }}/control
