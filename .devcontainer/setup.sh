@@ -38,3 +38,5 @@ yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirec
 yq -i '.flowable.ingress.host = strenv(DEV_INGRESS_HOST)' helm/dev/values.yaml
 yq -i '.flowable.ingress.host = strenv(TEST_INGRESS_HOST)' helm/test/values.yaml
 yq -i '.flowable.ingress.host = strenv(STG_INGRESS_HOST)' helm/stg/values.yaml
+
+. ~/bashrc
