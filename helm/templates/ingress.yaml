@@ -12,21 +12,21 @@ spec:
   - host:  # must be blank to use CodeSpaces app URL
     http:
       paths:
-      - path: /design
+      - path: {{ printf "/%s/design" .Release.Namespace | quote }}
         pathType: Prefix
         backend:
           service:
             name: flowable-design
             port:
               name: http
-      - path: /work
+      - path: {{ printf "/%s/work" .Release.Namespace | quote }}
         pathType: Prefix
         backend:
           service:
             name: flowable-work
             port:
               name: http
-      - path: /control
+      - path: {{ printf "/%s/control" .Release.Namespace | quote }}
         pathType: Prefix
         backend:
           service:
