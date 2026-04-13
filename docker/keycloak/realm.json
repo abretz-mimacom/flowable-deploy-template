@@ -543,7 +543,7 @@
       "id": "5889711f-eb5e-44fe-9f63-77ec290db2d1",
       "clientId": "global-sales-demo",
       "rootUrl": "https://supreme-robot-rjxpp4976gq3p96v-443.app.github.dev/login",
-      "adminUrl": "https://ominous-halibut-wrxpjwg9xp6f5965-443.app.github.dev",
+      "adminUrl": "https://supreme-robot-rjxpp4976gq3p96v-80.app.github.dev",
       "baseUrl": "https://supreme-robot-rjxpp4976gq3p96v-443.app.github.dev/login",
       "surrogateAuthRequired": false,
       "enabled": true,
@@ -551,10 +551,10 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "some-super-secret-key",
       "redirectUris": [
-        "https://ominous-halibut-wrxpjwg9xp6f5965-443.app.github.dev/*"
+        "https://supreme-robot-rjxpp4976gq3p96v-80.app.github.dev/*"
       ],
       "webOrigins": [
-        "https://ominous-halibut-wrxpjwg9xp6f5965-443.app.github.dev/*"
+        "https://supreme-robot-rjxpp4976gq3p96v-80.app.github.dev/*"
       ],
       "notBefore": 0,
       "bearerOnly": false,
