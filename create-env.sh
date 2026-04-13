@@ -3,7 +3,7 @@
 
 DISABLE_ARC="${4:-false}"
 
-. ~/.bashrc
+/bin/bash -c "echo"
 yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirect-url" = strenv(POST_LOGOUT_REDIRECT_URL)' helm/stg/values.yaml
 
