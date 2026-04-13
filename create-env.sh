@@ -54,7 +54,7 @@ else
 	# kubectl config set-context --current  --cluster="$CLUSTER_NAME"-kind --namespace="$NAMESPACE"
 fi
 
-if [ $1 == "--all" || $1 == "qa" ]; then
+if [[ $1 == "--all" || $1 == "qa" ]]; then
 	echo "qa-dev Flowable URLS: \n"
 	echo "Flowable Work: " $DEV_INGRESS_HOST "work/"
 	echo "Flowable Design: " $DEV_INGRESS_HOST "design/"
@@ -65,7 +65,7 @@ if [ $1 == "--all" || $1 == "qa" ]; then
 	echo "Flowable Control: " $TEST_INGRESS_HOST "control/"
 fi
 
-if [ $1 == "--all" || $1 == "prod" ]; then
+if [[ $1 == "--all" || $1 == "prod" ]]; then
 	echo "prod-stg Flowable URLS: \n"
 	echo "Flowable Work: " $STG_INGRESS_HOST "work/"
 	echo "Flowable Control: " $STG_INGRESS_HOST "control/"

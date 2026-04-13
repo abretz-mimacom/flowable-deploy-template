@@ -46,9 +46,9 @@ flowable:
       management.elastic.metrics.export.enabled: "true"
       flowable.indexing.enabled: "true"
       application.security.type: oauth2
-      spring.security.oauth2.client.registration.github.redirect-uri: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg/work/login/oauth2/code/github
+      spring.security.oauth2.client.registration.github.redirect-uri: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/work/login/oauth2/code/github
       flowable.security.oauth2.client.mapper.user-definition-key-attribute: location
-      flowable.security.oauth2.post-logout-redirect-url: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg/work/#/
+      flowable.security.oauth2.post-logout-redirect-url: https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/work/
       flowable.security.oauth2.client.mapper.default-user-definition-key: user-default
       # spring.security.oauth2.resourceserver.jwt.issuer-uri: https://github.com/login/oauth/access_token
       flowable.security.oauth2.resourceserver.jwt.principal-claim-name: id
