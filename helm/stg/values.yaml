@@ -19,6 +19,13 @@ flowable:
       extraEnvVars:
         - name: POSTGRESQL_MAX_CONNECTIONS
           value: "400"
+      resources:
+        requests:
+          cpu: "200m"
+          memory: "500Mi"
+        limits:
+          cpu: "500m"
+          memory: "1Gi"
   engage:
     enabled: false
   work:

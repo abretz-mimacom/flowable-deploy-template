@@ -10,25 +10,27 @@ flowable:
   #   domain: projects.flowable.io
   #   bodySize: "20m"
   #   ingressClass: external
-  openldap:
-    enabled: false
-  
-  keycloak:
-    enabled: false
     
   postgres:
-    enabled: false
-    # primary:
-    #   extraEnvVars:
-    #     - name: POSTGRESQL_MAX_CONNECTIONS
-    #       value: "400"
-    #   resources:
-    #     requests:
-    #       cpu: "500m"
-    #       memory: "1Gi"
-    #     limits:
-    #       cpu: "1"
-    #       memory: "2Gi"
+    enabled: true
+    image:
+      repository: bitnamilegacy/postgresql
+      tag: 17.5.0
+    service:
+      name: postgres
+    envVariables:
+      POSTGRES_MULTIPLE_DATABASES: "keycloak,internal"
+    primary:
+      extraEnvVars:
+        - name: POSTGRESQL_MAX_CONNECTIONS
+          value: "400"
+      resources:
+        requests:
+          cpu: "200m"
+          memory: "500Mi"
+        limits:
+          cpu: "500m"
+          memory: "1Gi"
 
   engage:
     enabled: false
@@ -36,12 +38,12 @@ flowable:
   work:
     enabled: true
     image:
-  #    repository: localhost:5001/myflowable
-      repository: ghcr.io/abretz-mimacom/flowable-models-public
+      # repository: ghcr.io/abretz-mimacom/flowable-models-public
       # tag: latest
-      tag: 1.16.0
-      # tag: 2025.1.01
+      # tag: 1.16.0
+      tag: 2025.2.04
     replicas: 1 # multi-node deployment
+    contextPath: /test/work
     resources:
       requests:
         cpu: "100m"
@@ -56,6 +58,7 @@ flowable:
       enabled: true
     envVariables:
       flowable.inspect.enabled: "true"
+      server.context: /test/work
   #    flowable.mail.server.host: greenmail.flowable.svc.cluster.local
   #    application.kafka-enabled: "true"
   #    spring.kafka.bootstrap-servers: "10.96.129.107:9092,10.96.119.140:9092,10.96.23.50:9092"
@@ -121,34 +124,16 @@ flowable:
 
   design:
     enabled: false
-    image:
-      # tag: latest
-      tag: 2025.1.01
-    resources:
-      requests:
-        cpu: "100m"
-        memory: "1.5Gi"
-      limits:
-        cpu: "1000m"
-        memory: "1.5Gi"
-    angularVersion: false
-    envVariables:
-        flowable.design.model-locking.enabled: true
-        flowable.design.model-locking.auto-lock-on-create: true
-  #      application.design.ai.type: openai
-  #      spring.ai.openai.api-key: ""
-  #      spring.ai.openai.chat.options.temperature: 0.3
-  #      spring.ai.openai.chat.options.model: gpt-4o
-  #      extraImagePullSecrets: flw-docker-auth
-  #      image:
-  #       repository: artifacts.flowable.com/docker-local/flowable/flowable-design
 
 
   control:
     enabled: true
+    contextPath: /test/control
     image:
       # tag: latest
-      tag: 2025.1.01
+      tag: 2025.2.04
+    envVariables:
+      server.context: /test/control
 
   flowable:
     dockerAuthSecret: flowable-flowable-regcred
