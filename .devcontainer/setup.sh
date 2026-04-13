@@ -20,11 +20,11 @@ if ! command -v kind >/dev/null 2>&1; then
 fi
 
 echo "re-writing env specific values"
-export DEV_INGRESS_HOST="https://${CODESPACE_NAME}-80.app.github.dev/dev"
-export TEST_INGRESS_HOST="https://${CODESPACE_NAME}-80.app.github.dev/test"
-export STG_INGRESS_HOST="https://${CODESPACE_NAME}-443.app.github.dev/stg"
-export AUTH_REDIRECT_URL="${STG_INGRESS_HOST}/work/login/oauth2/code/github"
-export POST_LOGOUT_REDIRECT_URL="${STG_INGRESS_HOST}/work/#/"
+echo "export DEV_INGRESS_HOST=\"https://${CODESPACE_NAME}-80.app.github.dev/dev\"" >> ~/.bashrc
+echo "export TEST_INGRESS_HOST=\"https://${CODESPACE_NAME}-80.app.github.dev/test\"" >> ~/.bashrc
+echo "export STG_INGRESS_HOST=\"https://${CODESPACE_NAME}-443.app.github.dev/stg\"" >> ~/.bashrc
+echo "export AUTH_REDIRECT_URL=\"${STG_INGRESS_HOST}/work/login/oauth2/code/github\"" >> ~/.bashrc
+echo "export POST_LOGOUT_REDIRECT_URL=\"${STG_INGRESS_HOST}/work/#/\"" >> ~/.bashrc
 
 
 yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
@@ -32,3 +32,4 @@ yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirec
 
 yq -i '.flowable.ingress.host = strenv(DEV_INGRESS_HOST)' helm/dev/values.yaml
 yq -i '.flowable.ingress.host = strenv(TEST_INGRESS_HOST)' helm/test/values.yaml
+yq -i '.flowable.ingress.host = strenv(STG_INGRESS_HOST)' helm/stg/values.yaml
