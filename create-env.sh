@@ -9,16 +9,17 @@ setup_cluster() {
 	echo "Setting up kind cluster '$cluster_name'"
 	export EXTRA_MOUNT_HOST_PATH=docker/keycloak
 	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" $DISABLE_ARC
-	bash -c "echo \"Opening new shell\""
+	source bash
 
 
 	brew install yq
-	bash -c "echo \"Opening new shell after installing yq\""
+	source bash
 	echo "re-writing env specific values"
 	export AUTH_REDIRECT_URL="https://${CODESPACE_NAME}-443.app.github.dev/work/login/oauth2/code/github"
 	export POST_LOGOUT_REDIRECT_URL="https://${CODESPACE_NAME}-443.app.github.dev/work/"
 	yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 	yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirect-url" = strenv(POST_LOGOUT_REDIRECT_URL)' helm/stg/values.yaml
+	source bash
 
 }
 
@@ -28,6 +29,7 @@ deploy_flowable() {
 	local release_name="$2"
 	echo "Deploying Flowable Platform in namespace '$namespace' with release name '$release_name'"
 	"$CODESPACE_VSCODE_FOLDER/scripts/deploy-flowable-platform.sh" "$namespace" "$release_name"
+	source bash
 }
 
 
@@ -71,7 +73,7 @@ if [[ $1 == "--all" || $1 == "prod" ]]; then
 	echo "Flowable Control: " $STG_INGRESS_HOST "control/"
 fi
 
-echo "It is more then likely that you will receive a 503 from these URL's after initial deploy. The pods are still starting."
-echo "To see the pods/clusters while they boot, including runtime logs, use the CLI tool K9s. Start by typing the command 'k9s -c --crumbless', then select the cluster you want to interact with to see the pods."
+echo "It is more then likely that you will receive a 503 from these URL's after initial deploy - the pods are still starting. \n\n"
+echo "To see the pods/clusters while they boot, including runtime logs, use the CLI tool K9s.\n Start by typing the command 'k9s -c --crumbless', then select the cluster you want to interact with to see the pods."
 
 source bash
