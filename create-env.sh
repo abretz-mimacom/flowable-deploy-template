@@ -9,17 +9,17 @@ setup_cluster() {
 	echo "Setting up kind cluster '$cluster_name'"
 	export EXTRA_MOUNT_HOST_PATH=docker/keycloak
 	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" $DISABLE_ARC
-	source bash
+	# bash -c echo
 
 
-	brew install yq
-	source bash
+	# brew install yq
+	# bash -c echo
 	echo "re-writing env specific values"
 	export AUTH_REDIRECT_URL="https://${CODESPACE_NAME}-443.app.github.dev/work/login/oauth2/code/github"
 	export POST_LOGOUT_REDIRECT_URL="https://${CODESPACE_NAME}-443.app.github.dev/work/"
 	yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 	yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirect-url" = strenv(POST_LOGOUT_REDIRECT_URL)' helm/stg/values.yaml
-	source bash
+	# source bash
 
 }
 
@@ -29,7 +29,7 @@ deploy_flowable() {
 	local release_name="$2"
 	echo "Deploying Flowable Platform in namespace '$namespace' with release name '$release_name'"
 	"$CODESPACE_VSCODE_FOLDER/scripts/deploy-flowable-platform.sh" "$namespace" "$release_name"
-	source bash
+	# source bash
 }
 
 
