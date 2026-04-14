@@ -33,4 +33,4 @@ echo "export STG_INGRESS_HOST=\"https://${CODESPACE_NAME}-443.app.github.dev/stg
 echo "export AUTH_REDIRECT_URL=\"${STG_INGRESS_HOST}/work/login/oauth2/code/github\"" >> ~/.bashrc
 echo "export POST_LOGOUT_REDIRECT_URL=\"${STG_INGRESS_HOST}/work/#/\"" >> ~/.bashrc
 
-. ~/.bashrc
+# . ~/.bashrc

@@ -7,7 +7,7 @@ CLUSTER_NAME="${3:-kind}"
 DISABLE_ARC="${4:-false}"
 
 /bin/bash -c "echo \"Updating values for this environment\""
-. ~/.bashrc
+source bash
 yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirect-url" = strenv(POST_LOGOUT_REDIRECT_URL)' helm/stg/values.yaml
 
