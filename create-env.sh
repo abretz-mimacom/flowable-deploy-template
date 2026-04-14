@@ -1,9 +1,13 @@
 
 #!/bin/bash
 
+NAMESPACE="${1:-dev}"
+RELEASE_NAME="${2:-flowable}"
+CLUSTER_NAME="${3:-kind}"
 DISABLE_ARC="${4:-false}"
 
 /bin/bash -c "echo \"Updating values for this environment\""
+. ~/.bashrc
 yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirect-url" = strenv(POST_LOGOUT_REDIRECT_URL)' helm/stg/values.yaml
 
@@ -39,17 +43,17 @@ if [[ "$1" == "--all" ]]; then
 	)
 	for config in "${configs[@]}"; do
 		set -- $config
-		setup_cluster "$3"
+		setup_cluster "$3";
+		echo "Setting kubectl context to --cluster=\"kind-$3\" --namespace=\"$1\""
+		kubectl config use-context "kind-$3" --namespace="$1"
 		deploy_flowable "$1" "$2"
-		# kubectl config set-context --current  --cluster="$3" --namespace="$1"
 	done
 else
-	NAMESPACE="${1:-dev}"
-	RELEASE_NAME="${2:-flowable}"
-	CLUSTER_NAME="${3:-kind}"
-	setup_cluster "$CLUSTER_NAME"
+
+	setup_cluster "$3"
+	echo "Setting kubectl context to --cluster=\"kind-${CLUSTER_NAME}\" --namespace=\"${NAMESPACE}\""
+	kubectl config use-context "kind-${CLUSTER_NAME}" --namespace="${NAMESPACE}"
 	deploy_flowable "$NAMESPACE" "$RELEASE_NAME"
-	# kubectl config set-context --current  --cluster="$CLUSTER_NAME"-kind --namespace="$NAMESPACE"
 fi
 
 if [[ $1 == "--all" || $1 == "qa" ]]; then
