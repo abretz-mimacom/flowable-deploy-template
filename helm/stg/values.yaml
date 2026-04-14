@@ -7,7 +7,7 @@ flowable:
     enabled: false
     host: "https://scaling-garbanzo-9pxjj7v6qw6c7jxw-443.app.github.dev/stg"
   postgres:
-    enabled: true
+    enabled: false
     image:
       repository: bitnamilegacy/postgresql
       tag: 17.5.0
@@ -49,6 +49,12 @@ flowable:
       server.tomcat.redirect-context-root: false
       server.forward-headers-strategy: framework
       flowable.inspect.enabled: "true"
+      spring.elasticsearch.uris: "http://docker-flowable-index-1:9200"
+      flowable.indexing.index-name-prefix: "stg-flowable-"
+      spring.datasource.driver-class-name: org.postgresql.Driver
+      spring.datasource.url: jdbc:postgresql://docker-flowable-db-1:5432/stg_work
+      spring.datasource.username: flowable
+      spring.datasource.password: flowable
       flowable.platform.enable-audit-log: "true"
       management.elastic.metrics.export.enabled: "true"
       flowable.indexing.enabled: "true"
@@ -96,16 +102,16 @@ flowable:
         # extraImagePullSecrets: flw-docker-auth
     resources:
       requests:
-        cpu: "1"
+        cpu: "300m"
         memory: "1024Mi"
       limits:
-        cpu: "1.5"
-        memory: "2048Mi"
+        cpu: "1000m"
+        memory: "4096Mi"
     storage:
       provisioner: rancher.io/local-path
       storageClass: standard
   elasticsearch:
-    enabled: true
+    enabled: false
     image:
       repository: bitnamilegacy/elasticsearch
       tag: 8.18.0
@@ -133,6 +139,10 @@ flowable:
       # flowable.control.app.security.type: basic
       # flowable.control.app.cluster-config.password: ${GITHUB_OAUTH_CLIENT_SECRET}
       server.contextPath: /stg/control
+      spring.datasource.driver-class-name: org.postgresql.Driver
+      spring.datasource.url: jdbc:postgresql://docker-flowable-db-1:5432/stg_control
+      spring.datasource.username: flowable
+      spring.datasource.password: flowable
       # flowable.control.app.cluster-config.authentication-type: basic
       flowable.control.app.security.type: oauth2
       flowable.control.app.cluster-config.authentication-type: oauth2CurrentUser
@@ -151,10 +161,10 @@ flowable:
         secretKey: clientId
     resources:
       requests:
-        cpu: "200m"
+        cpu: "300m"
         memory: "512Mi"
       limits:
-        cpu: "800m"
+        cpu: "500m"
         memory: "1024Mi"
   flowable:
     dockerAuthSecret: flowable-flowable-regcred

@@ -1,50 +1,92 @@
 services: 
+  flowable-index:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+    environment:
+      discovery.type: single-node
+      node.name: flowable-node-01
+      cluster.name: flowable-cluster
+      xpack.security.enabled: "false"
+    ports:
+      - "9300:9300"
+      - "9200:9200"
+    volumes:
+      - data_index:/usr/share/elasticsearch/data
+    # networks:
+    #   - flowable-index
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'     # Max 50% of a single CPU core
+          memory: 4096M     # Hard limit: container is killed if exceeded
+        reservations:
+          cpus: '0.25'     # Guaranteed minimum CPU
+          memory: 2048M     # Soft limit: guaranteed RAM
+
   flowable-db:
-    build: ./postgresql
+    image: postgres:16.3
     ports:
       - 5432:5432
     volumes:
       - data_db:/var/lib/postgresql/data
+      - ./postgresql/create-multiple-postgresql-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh
     environment:
-      - POSTGRES_MULTIPLE_DATABASES=keycloak,internal
+      - POSTGRES_MULTIPLE_DATABASES=dev_work,dev_control,dev_design,test_work,test_control,stg_work,stg_control
       - POSTGRES_DB=flowable
       - POSTGRES_USER=flowable
       - POSTGRES_PASSWORD=flowable
-  openldap:
-    build:
-      context: openldap
-    environment:
-      LDAP_ORGANISATION: "Flowable Global Sales"
-      LDAP_DOMAIN: "global-sales.flowable.com"
-      LDAP_ADMIN_PASSWORD: "test"
-    ports:
-      - 389:389
-    volumes:
-      - data_ldap:/var/lib/ldap
-      - data_slapd:/etc/ldap/slapd.d
-  keycloak:
-    image: keycloak/keycloak:20.0.0
-    # build:
-    #   context: keycloak
-    environment:
-      DB_DATABASE: keycloak
-      DB_ADDR: flowable-db
-      DB_USER: flowable
-      DB_PASSWORD: flowable
-      DB_VENDOR: postgres
-      # KEYCLOAK_URL: "https://vigilant-fortnight-q7g9q4pq57f9xx5-9095.app.github.dev/"
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: test
-      # See https://github.com/keycloak/keycloak-containers/blob/master/server/README.md
-      # KEYCLOAK_IMPORT: /tmp/oauth2-stack-realm.json
-      CUSTOM_REALM_KEYCLOAK_HOSTNAME: "https://vigilant-fortnight-q7g9q4pq57f9xx5-9095.app.github.dev/"
-      CUSTOM_REALM_LDAP_URI: "ldap://openldap:389"
-    command: ["start-dev"]
-    ports:
-      - 9095:8080
-    depends_on:
-      - flowable-db
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'     # Max 50% of a single CPU core
+          memory: 512M     # Hard limit: container is killed if exceeded
+          pids: 100        # Max number of processes/threads
+        reservations:
+          cpus: '0.25'     # Guaranteed minimum CPU
+          memory: 128M     # Soft limit: guaranteed RAM
+    # networks:
+    #   - flowable-db
+
+
+  # openldap:
+  #   build:
+  #     context: openldap
+  #   environment:
+  #     LDAP_ORGANISATION: "Flowable Global Sales"
+  #     LDAP_DOMAIN: "global-sales.flowable.com"
+  #     LDAP_ADMIN_PASSWORD: "test"
+  #   ports:
+  #     - 389:389
+  #   volumes:
+  #     - data_ldap:/var/lib/ldap
+  #     - data_slapd:/etc/ldap/slapd.d
+  # keycloak:
+  #   image: keycloak/keycloak:20.0.0
+  #   # build:
+  #   #   context: keycloak
+  #   environment:
+  #     DB_DATABASE: keycloak
+  #     DB_ADDR: flowable-db
+  #     DB_USER: flowable
+  #     DB_PASSWORD: flowable
+  #     DB_VENDOR: postgres
+  #     # KEYCLOAK_URL: "https://vigilant-fortnight-q7g9q4pq57f9xx5-9095.app.github.dev/"
+  #     KEYCLOAK_ADMIN: admin
+  #     KEYCLOAK_ADMIN_PASSWORD: test
+  #     # See https://github.com/keycloak/keycloak-containers/blob/master/server/README.md
+  #     # KEYCLOAK_IMPORT: /tmp/oauth2-stack-realm.json
+  #     CUSTOM_REALM_KEYCLOAK_HOSTNAME: "https://vigilant-fortnight-q7g9q4pq57f9xx5-9095.app.github.dev/"
+  #     CUSTOM_REALM_LDAP_URI: "ldap://openldap:389"
+  #   command: ["start-dev"]
+  #   ports:
+  #     - 9095:8080
+  #   depends_on:
+  #     - flowable-db
 volumes:
   data_db:
+  data_index:
   data_ldap:
   data_slapd:
+
+# networks:
+#   flowable-db:
+#   flowable-index:
