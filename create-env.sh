@@ -6,7 +6,8 @@ RELEASE_NAME="${2:-flowable}"
 CLUSTER_NAME="${3:-kind}"
 DISABLE_ARC="${4:-false}"
 
-source /bin/bash -c "echo \"Updating values for this environment\""
+source ~/.bashrc
+/bin/bash -c "echo \"Updating values for this environment\""
 yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirect-url" = strenv(POST_LOGOUT_REDIRECT_URL)' helm/stg/values.yaml
 
@@ -46,6 +47,7 @@ if [[ "$1" == "--all" ]]; then
 		echo "Setting kubectl context to --cluster=\"kind-$3\" --namespace=\"$1\""
 		kubectl config use-context "kind-$3" --namespace="$1"
 		deploy_flowable "$1" "$2"
+		source /bin/bash -c "echo \"Ensuring env is up to date\""
 	done
 else
 
