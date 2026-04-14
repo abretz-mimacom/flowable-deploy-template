@@ -47,7 +47,7 @@ if [[ "$1" == "--all" ]]; then
 		echo "Setting kubectl context to --cluster=\"kind-$3\" --namespace=\"$1\""
 		kubectl config use-context "kind-$3" --namespace="$1"
 		deploy_flowable "$1" "$2"
-		source /bin/bash -c "echo \"Ensuring env is up to date\""
+		source ~/.bashrc
 	done
 else
 
