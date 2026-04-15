@@ -22,7 +22,7 @@ flowable:
       #    repository: localhost:5001/myflowable
       # repository: ghcr.io/abretz-mimacom/flowable-models-public
       # tag: latest
-      tag: 2025.2.04
+      tag: 3.17.2
       # tag: 2025.1.01
     replicas: 1 # multi-node deployment
     resources:
@@ -80,7 +80,7 @@ flowable:
     enabled: true
     image:
       # tag: latest
-      tag: 2025.2.04
+      tag: 3.17.2
     resources:
       requests:
         cpu: "300m"
@@ -97,20 +97,45 @@ flowable:
       spring.datasource.url: jdbc:postgresql://docker-flowable-db-1:5432/dev_design
       spring.datasource.username: flowable
       spring.datasource.password: flowable
-  #      application.design.ai.type: openai
-  #      spring.ai.openai.api-key: ""
-  #      spring.ai.openai.chat.options.temperature: 0.3
-  #      spring.ai.openai.chat.options.model: gpt-4o
-  #      extraImagePullSecrets: flw-docker-auth
-  #      image:
-  #       repository: artifacts.flowable.com/docker-local/flowable/flowable-design
-
+      flowable.design.git.repo.enabled: true
+      flowable.design.git.repo.clone-dir: "${LOCAL_REPO_DIR:additional-classpath/flowable-models-repo}"
+      flowable.design.git.repo.remote-branch: master
+      flowable.design.git.repo.uri: git@github.com:abretz-mimacom/flowable-model-repo.git
+      logging.level.org.apache.sshd: DEBUG
+      #      application.design.ai.type: openai
+      #      spring.ai.openai.api-key: ""
+      #      spring.ai.openai.chat.options.temperature: 0.3
+      #      spring.ai.openai.chat.options.model: gpt-4o
+      #      extraImagePullSecrets: flw-docker-auth
+      #      image:
+      #       repository: artifacts.flowable.com/docker-local/flowable/flowable-design
+    extraVolumes:
+      - name: additional-classpath
+        hostPath:
+          path: /extra-mount/jar-exports
+          type: Directory
+      - name: ssh-keys
+        hostPath:
+          path: /extra-mount/.ssh
+          type: Directory
+    extraVolumeMounts:
+      - name: additional-classpath
+        mountPath: /additional-classpath
+      - name: ssh-keys
+        mountPath: /home/flowable/.ssh
+        # envSecrets:
+        #   - name: GITHUB_OAUTH_CLIENT_SECRET
+        #     secretName: flowable-github-oauth
+        #     secretKey: clientSecret
+        #   - name: GITHUB_OAUTH_CLIENT_ID
+        #     secretName: flowable-github-oauth
+        #     secretKey: clientId
   control:
     enabled: true
     contextPath: /dev/control
     image:
       # tag: latest
-      tag: 2025.2.04
+      tag: 3.17.2
     envVariables:
       server.context: /dev/control
       spring.datasource.driver-class-name: org.postgresql.Driver
@@ -126,6 +151,8 @@ flowable:
         memory: "1.5Gi"
   flowable:
     dockerAuthSecret: flowable-flowable-regcred
+    extensionPoints:
+      GITHUB_USER: ${GITHUB_USER}
   prometheus:
     enabled: false
     monitoring:

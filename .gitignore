@@ -4,3 +4,4 @@ kubectl
 
 flowable.license
 docker/keycloak/realm.json
+.ssh

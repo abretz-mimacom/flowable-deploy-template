@@ -19,8 +19,15 @@ yq -i '.flowable.ingress.host = strenv(STG_INGRESS_HOST)' helm/stg/values.yaml
 setup_cluster() {
 	local cluster_name="$1"
 	echo "Setting up kind cluster '$cluster_name'"
-	export EXTRA_MOUNT_HOST_PATH=docker/keycloak
+	export EXTRA_MOUNT_HOST_PATH=docker
 	"$CODESPACE_VSCODE_FOLDER/scripts/kind-cluster-setup.sh" "$cluster_name" $DISABLE_ARC
+	source ~/.bashrc
+	if [ ! -f "/home/codespace/.ssh/id_rsa" ]; then
+		mkdir -p /home/codespace/.ssh
+		ssh-keygen -t rsa -b 4096 -f /home/codespace/.ssh/id_rsa -P ""
+		echo "$ARC_TOKEN" | gh auth login -p https --with-token
+		gh ssh-key add /home/codespace/.ssh/id_rsa.pub --title "${CODESPACE_NAME}" --type authentication
+	fi
 
 }
 
@@ -30,6 +37,14 @@ deploy_flowable() {
 	local release_name="$2"
 	echo "Deploying Flowable Platform in namespace '$namespace' with release name '$release_name'"
 	"$CODESPACE_VSCODE_FOLDER/scripts/deploy-flowable-platform.sh" "$namespace" "$release_name"
+	if [ ! -f "docker/.ssh/id_rsa" ]; then
+		sudo mkdir -p docker/.ssh
+		echo "github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=" >> docker/.ssh/known_hosts
+		sudo cp /home/codespace/.ssh/id_rsa docker/.ssh/
+		sudo cp /home/codespace/.ssh/id_rsa.pub docker/.ssh/
+		sudo chmod +rw docker/.ssh
+		sudo chown 100:100 docker/.ssh/id_rsa docker/.ssh/id_rsa.pub docker/.ssh/known_hosts
+	fi
 }
 
 
