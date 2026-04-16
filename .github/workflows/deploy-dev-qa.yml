@@ -19,15 +19,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install kubectl
-        run: |
-          curl -LO "https://cdn.dl.k8s.io/release/$(curl -L -s https://cdn.dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          # Make the binary executable
-          chmod +x kubectl
-          # Move the binary to a directory in your system's PATH
-          sudo mv ./kubectl /usr/local/bin/kubectl
       - name: Set kubeconfig output
         id: set-kubeconfig
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.35.0'  
         run: echo "kubeconfig-path=$HOME/.kube/config" >> $GITHUB_OUTPUT
 
   deploy-dev:
@@ -40,7 +36,7 @@ jobs:
       - name: Install kubectl and helm
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.30.0'   # match your cluster
+          version: 'v1.35.0'   # match your cluster
 
       - name: Show cluster nodes (in-cluster auth)
         run: |
@@ -75,7 +71,7 @@ jobs:
       - name: Install kubectl and helm
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.30.0'   # match your cluster
+          version: 'v1.35.0'   # match your cluster
 
       - name: Show cluster nodes (in-cluster auth)
         run: |
@@ -110,7 +106,7 @@ jobs:
       - name: Install kubectl and helm
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.30.0'
+          version: 'v1.35.0'
 
       - name: Show cluster nodes (in-cluster auth)
         run: |

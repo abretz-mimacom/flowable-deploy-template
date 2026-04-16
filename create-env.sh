@@ -15,6 +15,7 @@ yq -i '.flowable.ingress.host = strenv(DEV_INGRESS_HOST)' helm/dev/values.yaml
 yq -i '.flowable.ingress.host = strenv(TEST_INGRESS_HOST)' helm/test/values.yaml
 yq -i '.flowable.ingress.host = strenv(STG_INGRESS_HOST)' helm/stg/values.yaml
 
+docker-compose -f docker/docker-compose.yml up -d
 # Reusable function for cluster setup
 setup_cluster() {
 	local cluster_name="$1"
@@ -27,6 +28,16 @@ setup_cluster() {
 		ssh-keygen -t rsa -b 4096 -f /home/codespace/.ssh/id_rsa -P ""
 		echo "$ARC_TOKEN" | gh auth login -p https --with-token
 		gh ssh-key add /home/codespace/.ssh/id_rsa.pub --title "${CODESPACE_NAME}" --type authentication
+	fi
+
+	if [ "$(docker inspect -f='{{json .NetworkSettings.Networks.kind}}' "docker-flowable-db-1")" = 'null' ]; then
+		echo "Connecting kind network to db container"
+		docker network connect "kind" "docker-flowable-db-1"
+	fi
+
+	if [ "$(docker inspect -f='{{json .NetworkSettings.Networks.kind}}' "docker-flowable-index-1")" = 'null' ]; then
+		echo "Connecting kind network to index container"
+		docker network connect "kind" "docker-flowable-index-1"
 	fi
 
 }
