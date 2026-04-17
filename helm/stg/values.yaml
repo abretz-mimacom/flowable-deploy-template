@@ -33,7 +33,8 @@ flowable:
     image:
       #    repository: localhost:5001/myflowable
       # tag: latest
-      tag: 2025.2.03
+      tag: v2.0.0-f269cd3
+      repository: ghcr.io/abretz-mimacom/abretz-mimacom/flowable-models-repo
     replicas: 1 # multi-node deployment
     metrics:
       enabled: true
