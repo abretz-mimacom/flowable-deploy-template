@@ -26,7 +26,8 @@ setup_cluster() {
 	if [ ! -f "/home/codespace/.ssh/id_rsa" ]; then
 		mkdir -p /home/codespace/.ssh
 		ssh-keygen -t rsa -b 4096 -f /home/codespace/.ssh/id_rsa -P ""
-		echo $ARC_TOKEN | gh auth login -p https --with-token
+		
+		GITHUB_TOKEN="" echo $ARC_TOKEN | gh auth login -p https --with-token
 		gh ssh-key add /home/codespace/.ssh/id_rsa.pub --title "${CODESPACE_NAME}" --type authentication
 	fi
 
