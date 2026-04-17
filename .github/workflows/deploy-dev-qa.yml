@@ -1,4 +1,3 @@
-
 name: Deploy Flowable Platform
 
 on:
@@ -19,11 +18,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set kubeconfig output
-        id: set-kubeconfig
+      - name: Install kubectl and helm
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.35.0'  
+          version: 'v1.35.0'   # match your cluster
+      - name: Set kubeconfig output
+        id: set-kubeconfig
         run: echo "kubeconfig-path=$HOME/.kube/config" >> $GITHUB_OUTPUT
 
   deploy-dev:
@@ -71,7 +71,7 @@ jobs:
       - name: Install kubectl and helm
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.35.0'   # match your cluster
+          version: 'v1.30.0'   # match your cluster
 
       - name: Show cluster nodes (in-cluster auth)
         run: |
@@ -106,7 +106,7 @@ jobs:
       - name: Install kubectl and helm
         uses: azure/setup-kubectl@v4
         with:
-          version: 'v1.35.0'
+          version: 'v1.30.0'
 
       - name: Show cluster nodes (in-cluster auth)
         run: |
