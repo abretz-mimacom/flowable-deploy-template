@@ -100,7 +100,7 @@ flowable:
       flowable.design.git.repo.enabled: true
       flowable.design.git.repo.clone-dir: "${LOCAL_REPO_DIR:additional-classpath/flowable-models-repo}"
       flowable.design.git.repo.remote-branch: master
-      flowable.design.git.repo.uri: git@github.com:abretz-mimacom/flowable-model-repo.git
+      flowable.design.git.repo.uri: git@github.com:abretz-mimacom/flowable-models-repo.git
       logging.level.org.apache.sshd: DEBUG
       #      application.design.ai.type: openai
       #      spring.ai.openai.api-key: ""
