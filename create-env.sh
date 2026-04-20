@@ -52,24 +52,6 @@ deploy_flowable() {
 	"$CODESPACE_VSCODE_FOLDER/scripts/deploy-flowable-platform.sh" "$namespace" "$release_name"
 	source ~/.bashrc
 	
-	if [ ! -f "/home/codespace/.ssh/id_rsa" ]; then
-		mkdir -p /home/codespace/.ssh
-		ssh-keygen -t rsa -b 4096 -f /home/codespace/.ssh/id_rsa -P ""
-
-		export GITHUB_TOKEN="" 
-		echo $ARC_TOKEN | gh auth login -p https --with-token
-		gh ssh-key add /home/codespace/.ssh/id_rsa.pub --title "${CODESPACE_NAME}" --type authentication
-	fi
-
-	if [ "$(docker inspect -f='{{json .NetworkSettings.Networks.kind}}' "docker-flowable-db-1")" = 'null' ]; then
-		echo "Connecting kind network to db container"
-		docker network connect "kind" "docker-flowable-db-1"
-	fi
-
-	if [ "$(docker inspect -f='{{json .NetworkSettings.Networks.kind}}' "docker-flowable-index-1")" = 'null' ]; then
-		echo "Connecting kind network to index container"
-		docker network connect "kind" "docker-flowable-index-1"
-	fi
 }
 
 
