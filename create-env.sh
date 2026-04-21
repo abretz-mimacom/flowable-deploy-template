@@ -28,8 +28,17 @@ setup_cluster() {
 		ssh-keygen -t rsa -b 4096 -f /home/codespace/.ssh/id_rsa -P ""
 		
 		export GITHUB_TOKEN="" 
-		echo $ARC_TOKEN | gh auth login -p https --with-token
+		gh auth refresh -h github.com -s admin:public_key
 		gh ssh-key add /home/codespace/.ssh/id_rsa.pub --title "${CODESPACE_NAME}" --type authentication
+
+		mkdir -p docker/.ssh
+		cp /home/codespace/.ssh/id_rsa.pub docker/.ssh/
+		cp /home/codespace/.ssh/id_rsa docker/.ssh/
+		echo "github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=" >> docker/.ssh/known_hosts
+		sudo chmod +rw docker/.ssh
+		sudo chown 100:100 docker/.ssh/id_rsa
+		sudo chown 100:100 docker/.ssh/id_rsa
+		sudo chown 100:100 docker/.ssh/known_hosts
 	fi
 
 	if [ "$(docker inspect -f='{{json .NetworkSettings.Networks.kind}}' "docker-flowable-db-1")" = 'null' ]; then
