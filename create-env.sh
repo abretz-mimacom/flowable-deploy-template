@@ -11,7 +11,7 @@ source ~/.bashrc
 yq -i '.flowable.work.envVariables."spring.security.oauth2.client.registration.github.redirect-uri" = strenv(AUTH_REDIRECT_URL)' helm/stg/values.yaml
 yq -i '.flowable.work.envVariables."flowable.security.oauth2.post-logout-redirect-url" = strenv(POST_LOGOUT_REDIRECT_URL)' helm/stg/values.yaml
 
-export MODELS_REPO="$GITHUB_USER/flowable-models-repo"
+export MODELS_REPO="git@github.com:$GITHUB_USER/flowable-models-repo"
 yq -i '.flowable.design.envVariables."flowable.design.git.repo.uri" = strenv(MODELS_REPO)' helm/dev/values.yaml
 yq -i '.flowable.ingress.host = strenv(DEV_INGRESS_HOST)' helm/dev/values.yaml
 yq -i '.flowable.ingress.host = strenv(TEST_INGRESS_HOST)' helm/test/values.yaml
