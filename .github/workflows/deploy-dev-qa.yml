@@ -10,25 +10,8 @@ on:
       - 'v*.*.*'
 
 jobs:
-  # setup:
-  #   runs-on: [self-hosted]
-  #   if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-  #   outputs:
-  #     kubeconfig-path: ${{ steps.set-kubeconfig.outputs.kubeconfig-path }}
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-  #     - name: Install Kubectl and helm
-  #       uses: azure/setup-kubectl@v4
-  #       with:
-  #         version: 'v1.35.0'  
-  #     - name: Set kubeconfig output
-  #       id: set-kubeconfig
-  #       run: echo "kubeconfig-path=$HOME/.kube/config" >> $GITHUB_OUTPUT
-
 
   deploy-dev:
-    # needs: setup
     runs-on: [self-hosted, qa] # only runs on a self-hosted runner with the 'qa' label
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') && contains(github.ref, 'refs/heads/release/') }}
     steps:
@@ -47,6 +30,7 @@ jobs:
           TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
           CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
           kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get pods -A
+
       - name: Use kind kubeconfig for qa cluster
         run: |
           export KUBECONFIG="${{ steps.set-kubeconfig.outputs.kubeconfig-path }}"
@@ -64,7 +48,6 @@ jobs:
           FLOWABLE_REPO_PASSWORD: ${{ secrets.FLOWABLE_REPO_PASSWORD }}
 
   deploy-test:
-    # needs: setup
     runs-on: [self-hosted, qa] # only runs on a self-hosted runner with the 'qa' label
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') && github.ref == 'refs/heads/dev' }}
     steps:
@@ -84,6 +67,7 @@ jobs:
           TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
           CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
           kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get pods -A
+
       - name: Use kind kubeconfig for qa cluster
         run: |
           export KUBECONFIG="${{ steps.set-kubeconfig.outputs.kubeconfig-path }}"
@@ -101,7 +85,6 @@ jobs:
           FLOWABLE_REPO_PASSWORD: ${{ secrets.FLOWABLE_REPO_PASSWORD }}
 
   deploy-stg:
-    # needs: setup
     runs-on: [self-hosted, prod] # only runs on a self-hosted runner with the 'prod' label
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') && github.ref == 'refs/heads/main' }}
     steps:
@@ -121,6 +104,7 @@ jobs:
           TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
           CA="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
           kubectl --server="${API}" --token="${TOKEN}" --certificate-authority="${CA}" get pods -A
+
       - name: Use kind kubeconfig for prod cluster
         run: |
           export KUBECONFIG="${{ steps.set-kubeconfig.outputs.kubeconfig-path }}"
