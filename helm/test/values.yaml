@@ -22,7 +22,8 @@ flowable:
       # repository: ghcr.io/abretz-mimacom/flowable-models-public
       # tag: latest
       # tag: 1.16.0
-      tag: 2025.2.04
+      tag: v1.0.4-6e7fd4e
+      repository: ghcr.io/abretz-mimacom/abretz-mimacom/flowable-models-deploy
     replicas: 1 # multi-node deployment
     contextPath: /test/work
     resources:
